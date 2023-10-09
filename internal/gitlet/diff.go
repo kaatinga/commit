@@ -21,7 +21,7 @@ func GetDiff(path string) (string, error) {
 		return "", err
 	}
 
-	if len(output) > 4000 {
+	if len(output) > 3000 {
 		output, err = RunCommand(`git diff --name-only --diff-algorithm=minimal -- *.go`, path)
 		if err != nil {
 			return "", err
