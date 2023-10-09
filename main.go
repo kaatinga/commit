@@ -29,7 +29,7 @@ func main() {
 		Name:           "A git commit CLI tool",
 		Description:    "Commit helps to generate commit messages.",
 		DefaultCommand: "commit",
-		Version:        "v19.99.0",
+		Version:        "v1.0.0",
 		Compiled:       time.Now(),
 		Authors: []*cli.Author{
 			{
