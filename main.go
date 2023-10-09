@@ -19,8 +19,15 @@ var (
 
 const (
 	requestTemplate = `
-Prepare a short commit message for the following changes, the response must contain only commit message itself. Code diff:
----------
+Prepare a short commit message for the following changes, the response must contain only commit message itself. 
+Files:
+----------------
+%s
+----------------
+Code diff:
+----------------
+%s
+----------------
 `
 )
 
@@ -48,6 +55,11 @@ func main() {
 						return cli.Exit("openAI API key is not specified", 1)
 					}
 
+					files, err := gitlet.GetFileList(path)
+					if err != nil {
+						return err
+					}
+
 					diff, err := gitlet.GetDiff(path)
 					if err != nil {
 						return err
@@ -57,7 +69,7 @@ func main() {
 					defer cancelFunc()
 
 					var response string
-					response, err = gpt.NewRequest(ctx, apiKey, requestTemplate+diff)
+					response, err = gpt.NewRequest(ctx, apiKey, fmt.Sprintf(requestTemplate, files, diff))
 					if err != nil {
 						return err
 					}

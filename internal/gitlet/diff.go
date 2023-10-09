@@ -31,6 +31,15 @@ func GetDiff(path string) (string, error) {
 	return output, nil
 }
 
+func GetFileList(path string) (string, error) {
+	output, err := RunCommand(`git diff --name-only --diff-algorithm=minimal`, path)
+	if err != nil {
+		return "", err
+	}
+
+	return output, nil
+}
+
 type GitInfo struct {
 	Repo *git.Repository
 	Msg  string
