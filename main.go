@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"runtime/debug"
 	"time"
 
 	"github.com/kaatinga/commit/internal/gitlet"
@@ -15,6 +16,7 @@ import (
 var (
 	path   = "."
 	apiKey = os.Getenv("OPENAI_API_KEY")
+	dryRun = os.Getenv("COMMIT_DRYRUN") == "true"
 )
 
 const (
@@ -36,7 +38,7 @@ func main() {
 		Name:           "A git commit CLI tool",
 		Description:    "Commit helps to generate commit messages.",
 		DefaultCommand: "commit",
-		Version:        "v1.0.0",
+		Version:        getVersion(),
 		Compiled:       time.Now(),
 		Authors: []*cli.Author{
 			{
@@ -80,6 +82,10 @@ func main() {
 						return err
 					}
 
+					if dryRun {
+						fmt.Println("Dry run mode, commit message:\n", response)
+						return nil
+					}
 					fmt.Println("Added commit:\n", response)
 					return gitInfo.Commit()
 				},
@@ -114,4 +120,22 @@ func main() {
 	if err := app.Run(os.Args); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func getVersion() string {
+	info, ok := debug.ReadBuildInfo()
+	if !ok {
+		return "unknown"
+	}
+	var version string
+	for _, s := range info.Settings {
+		if s.Key == "vcs.revision" {
+			v, err := gitlet.RunCommand("git describe --contains 1f2d47b551c5399ac00c2c94ac9f5e59eb7a4944", "")
+			if err != nil {
+				return "unknown"
+			}
+			version = v
+		}
+	}
+	return version
 }
