@@ -3,10 +3,9 @@ package gitlet
 import (
 	"bytes"
 	"errors"
+	"github.com/kaatinga/commit/internal/settings"
 	"io"
-	"log"
 	"os/exec"
-	"path/filepath"
 	"strings"
 	"time"
 
@@ -15,29 +14,12 @@ import (
 	"github.com/go-git/go-git/v5/plumbing/object"
 )
 
-func GetDiff(path string) (string, error) {
-	output, err := RunCommand(`git diff --diff-algorithm=minimal -- *.go`, path)
-	if err != nil {
-		return "", err
-	}
-
-	if len(output) > 3000 {
-		output, err = RunCommand(`git diff --name-only --diff-algorithm=minimal -- *.go`, path)
-		if err != nil {
-			return "", err
-		}
-	}
-
-	return output, nil
+func GetDiff() (string, error) {
+	return RunCommand(`git diff --diff-algorithm=minimal -- *.go`, settings.Path)
 }
 
-func GetFileList(path string) (string, error) {
-	output, err := RunCommand(`git diff --name-only --diff-algorithm=minimal`, path)
-	if err != nil {
-		return "", err
-	}
-
-	return output, nil
+func GetFileList() (string, error) {
+	return RunCommand(`git diff --name-only --diff-algorithm=minimal`, settings.Path)
 }
 
 type GitInfo struct {
@@ -46,16 +28,10 @@ type GitInfo struct {
 	object.Signature
 }
 
-func NewGitInfo(path, msg string) (*GitInfo, error) {
-	absoluteFileName, err := filepath.Abs(path)
-	if err != nil {
-		return nil, err
-	}
-
-	log.Println(absoluteFileName)
-
+func NewGitInfo(msg string) (*GitInfo, error) {
 	gitInfo := &GitInfo{Msg: msg}
-	gitInfo.Repo, err = git.PlainOpen(absoluteFileName)
+	var err error
+	gitInfo.Repo, err = git.PlainOpen(settings.RepositoryPath)
 	if err != nil {
 		return nil, err
 	}

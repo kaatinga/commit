@@ -56,7 +56,7 @@ func TestNewGitInfo(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotGitInfo, err := NewGitInfo(tt.args.path, tt.args.msg)
+			gotGitInfo, err := NewGitInfo(tt.args.msg)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("NewGitInfo() error = %v, wantErr %v", err, tt.wantErr)
 				if err != nil {
@@ -81,19 +81,15 @@ func TestNewGitInfo(t *testing.T) {
 }
 
 func TestGetDiff(t *testing.T) {
-	type args struct {
-		path string
-	}
 	tests := []struct {
 		name    string
-		args    args
 		wantErr bool
 	}{
-		{"test 1", args{"."}, false},
+		{"test 1", false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := GetDiff(tt.args.path)
+			_, err := GetDiff()
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetDiff() error = %v, wantErr %v", err, tt.wantErr)
 				return
