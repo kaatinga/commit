@@ -97,6 +97,14 @@ func Generate(cCtx *cli.Context) error {
 		return nil
 	}
 
+	userRequest := gpt.OpenAIContextItem{
+		Message: openai.ChatCompletionMessage{
+			Role:    openai.ChatMessageRoleUser,
+			Content: response.Summary,
+		},
+	}
+	userRequest.Persist()
+
 	err = response.Persist()
 	if err != nil {
 		return err
@@ -146,6 +154,10 @@ func prepareRequest() ([]openai.ChatCompletionMessage, error) {
 		Role:    openai.ChatMessageRoleUser,
 		Content: fmt.Sprintf(requestTemplate, files, diff),
 	})
+
+	// for _, message := range messages {
+	// 	fmt.Printf("%s%s%s\n", color.Yellow, message.Content, color.Reset)
+	// }
 
 	return messages, nil
 }
