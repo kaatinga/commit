@@ -21,7 +21,7 @@ stage all changed files in your git repository and craft a concise, meaningful c
 
 ## Installation:
 
-    go install github.com/commitdev/commit@latest
+    go install github.com/kaatinga/commit@latest
 
 ## Usage:
 
