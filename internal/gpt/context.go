@@ -39,8 +39,8 @@ func (gptContext *OpenAIContextItem) Persist() error {
 	defer writer.Flush()
 
 	return writer.Write([]string{
-		gptContext.Date,
-		strings.ReplaceAll(gptContext.Summary, "\n", " "),
+		gptContext.Date.Format(time.RFC822),
+		strings.ReplaceAll(gptContext.Message.Content, "\n", " "),
 		gptContext.Message.Role,
 	})
 }
@@ -69,7 +69,7 @@ func OpenContext() ([]OpenAIContextItem, error) {
 
 			return []OpenAIContextItem{
 				{
-					Date: time.Now().UTC().Format(time.RFC822),
+					Date: time.Now().UTC(),
 					Message: openai.ChatCompletionMessage{
 						Role:    openai.ChatMessageRoleUser,
 						Content: "[comment] the context history is empty. This is the first request to commit API for this repository",
@@ -96,8 +96,15 @@ func OpenContext() ([]OpenAIContextItem, error) {
 		} else {
 			content = "[openAI]" + record[1]
 		}
+
+		var recordTime time.Time
+		recordTime, err = time.Parse(time.RFC822, record[0])
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse time from context file: %w", err)
+		}
+
 		context = append(context, OpenAIContextItem{
-			Date: record[0],
+			Date: recordTime,
 			Message: openai.ChatCompletionMessage{
 				Content: content,
 				Role:    record[2],

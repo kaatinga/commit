@@ -11,7 +11,7 @@ import (
 type OpenAIContextItem struct {
 	Message openai.ChatCompletionMessage
 	Summary string
-	Date    string
+	Date    time.Time
 }
 
 // NewRequest function creates APIContext instance.
@@ -21,7 +21,7 @@ func NewRequest(ctx context.Context, apiKey string, messages []openai.ChatComple
 		ctx,
 		openai.ChatCompletionRequest{
 			Model:       openai.GPT3Dot5Turbo16K0613,
-			MaxTokens:   125,
+			MaxTokens:   135,
 			Temperature: 0.7,
 			Messages:    messages,
 		},
@@ -35,7 +35,7 @@ func NewRequest(ctx context.Context, apiKey string, messages []openai.ChatComple
 
 func newOpenAIResponse(response openai.ChatCompletionMessage) (*OpenAIContextItem, error) {
 	gptContext := &OpenAIContextItem{
-		Date:    time.Now().UTC().Format(time.RFC822),
+		Date:    time.Now().UTC(),
 		Message: response,
 	}
 

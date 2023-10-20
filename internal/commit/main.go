@@ -58,7 +58,7 @@ You may receive context with these tags:
 - [user]: Commit messages written by the user.
 - [comment]: Additional contextual information.
 
-You MUST NOT use these tags in the response.
+You MUST NOT use these [summary], [openAI] and any other tags in the response.
 
 Make sure to adhere to this two-line format consistently.
 `
@@ -102,6 +102,7 @@ func Generate(cCtx *cli.Context) error {
 			Role:    openai.ChatMessageRoleUser,
 			Content: response.Summary,
 		},
+		Date: response.Date.Add(-2 * time.Second),
 	}
 	userRequest.Persist()
 
