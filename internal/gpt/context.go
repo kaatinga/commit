@@ -1,17 +1,21 @@
 package gpt
 
 import (
-	"bytes"
 	"encoding/csv"
 	"errors"
 	"fmt"
-	"github.com/kaatinga/commit/internal/settings"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/sashabaranov/go-openai"
+
+	"github.com/kaatinga/commit/internal/gitlet"
+	"github.com/kaatinga/commit/internal/settings"
 )
+
+const csvSeparator = '🧮'
 
 // Persist method saves openai message history to recover context.
 func (gptContext *OpenAIContextItem) Persist() error {
@@ -25,34 +29,18 @@ func (gptContext *OpenAIContextItem) Persist() error {
 	}
 	defer contextFile.Close()
 
-	// update .gitignore if needed
-	var gitIgnoreFile *os.File
-	gitIgnoreFile, err = os.OpenFile(filepath.Join(settings.RepositoryPath, ".gitignore"), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	err = gitlet.UpdateGitIgnore(err)
 	if err != nil {
-		return fmt.Errorf("failed to open/create .gitignore file: %w", err)
-	}
-	defer gitIgnoreFile.Close()
-
-	// check that .gitoignore contains .commit folder
-	var gitIgnoreContent []byte
-	gitIgnoreContent, err = os.ReadFile(filepath.Join(settings.RepositoryPath, ".gitignore"))
-	if err != nil {
-		return fmt.Errorf("failed to read .gitignore file: %w", err)
-	}
-
-	if !bytes.Contains(gitIgnoreContent, []byte(settings.ContextFolder)) {
-		_, err = gitIgnoreFile.WriteString(settings.ContextFolder + "/\n")
-		if err != nil {
-			return fmt.Errorf("failed to write .gitignore file: %w", err)
-		}
+		return err
 	}
 
 	writer := csv.NewWriter(contextFile)
+	writer.Comma = csvSeparator
 	defer writer.Flush()
 
 	return writer.Write([]string{
 		gptContext.Date,
-		gptContext.Summary,
+		strings.ReplaceAll(gptContext.Summary, "\n", " "),
 		gptContext.Message.Role,
 	})
 }
@@ -94,6 +82,7 @@ func OpenContext() ([]OpenAIContextItem, error) {
 
 	var records [][]string
 	reader := csv.NewReader(file)
+	reader.Comma = csvSeparator
 	records, err = reader.ReadAll()
 	if err != nil {
 		return nil, err

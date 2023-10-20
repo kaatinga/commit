@@ -1,9 +1,10 @@
 package gitlet
 
 import (
-	"github.com/go-git/go-git/v5/plumbing/object"
 	"testing"
 	"time"
+
+	"github.com/go-git/go-git/v5/plumbing/object"
 )
 
 func TestNewGitInfo(t *testing.T) {
