@@ -5,8 +5,7 @@
 
 # commit CLI Tool
 
-`commit` is an automatic commit message generator that harnesses the power of AI to help you streamline your version
-control workflow.
+`commit` is an AI-powered commit message generator that helps you streamline your version control workflow.
 
 ## Overview
 
