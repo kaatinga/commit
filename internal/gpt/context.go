@@ -38,13 +38,7 @@ func (gptContext *OpenAIContextItem) Persist() error {
 	writer.Comma = csvSeparator
 	defer writer.Flush()
 
-	var prefix string
-	if gptContext.Message.Role == openai.ChatMessageRoleUser {
-		prefix = "[user]: "
-	} else {
-		prefix = "[openAI]: "
-	}
-	content := prefix + base64.StdEncoding.EncodeToString([]byte(gptContext.Message.Content))
+	content := base64.StdEncoding.EncodeToString([]byte(gptContext.Message.Content))
 	return writer.Write([]string{gptContext.Date.Format(time.RFC3339), content, gptContext.Message.Role})
 }
 
@@ -105,13 +99,20 @@ func OpenContext() ([]OpenAIContextItem, error) {
 			return nil, fmt.Errorf("failed to parse time from context file: %w", err)
 		}
 
-		context = append(context, OpenAIContextItem{
+		chatCompletion := OpenAIContextItem{
 			Date: recordTime,
 			Message: openai.ChatCompletionMessage{
-				Content: string(decodedContent),
-				Role:    record[2],
+				Role: record[2],
 			},
-		})
+		}
+
+		if chatCompletion.Message.Role == openai.ChatMessageRoleUser {
+			chatCompletion.Message.Content = "[user]: " + string(decodedContent)
+		} else {
+			chatCompletion.Message.Content = "[openAI]: " + string(decodedContent)
+		}
+
+		context = append(context, chatCompletion)
 	}
 
 	return context, nil
