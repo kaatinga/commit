@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io"
 	"log"
 	"os"
 	"time"
@@ -11,8 +12,21 @@ import (
 	"github.com/kaatinga/commit/internal/settings"
 )
 
-func init() {
+var version = "unknown"
 
+func init() {
+	file, err := os.Open(".VERSION")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var data []byte
+	data, err = io.ReadAll(file)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	version = string(data)
 }
 
 func main() {
@@ -20,7 +34,7 @@ func main() {
 		Name:           "A git commit CLI tool",
 		Description:    "Commit helps to generate commit messages.",
 		DefaultCommand: "commit",
-		Version:        "1.3.0",
+		Version:        version,
 		Compiled:       time.Now(),
 		Authors: []*cli.Author{
 			{

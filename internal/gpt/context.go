@@ -48,7 +48,9 @@ func OpenContext() ([]OpenAIContextItem, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to get absolute path to context file: %w", err)
 	}
-	file, err := os.Open(absoluteFileName)
+
+	var file *os.File
+	file, err = os.Open(absoluteFileName)
 	if err != nil {
 		var pathError = new(os.PathError)
 		if errors.As(err, &pathError) {
@@ -74,6 +76,7 @@ func OpenContext() ([]OpenAIContextItem, error) {
 				},
 			}, nil
 		}
+
 		return nil, fmt.Errorf("failed to open context file: %w", err)
 	}
 
