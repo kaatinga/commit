@@ -157,10 +157,5 @@ func prepareRequest() ([]openai.ChatCompletionMessage, error) {
 		Content: fmt.Sprintf(requestTemplate, files, diff),
 	})
 
-	for _, message := range messages {
-		fmt.Println("---")
-		fmt.Printf("%s%s%s\n", color.Yellow, message.Content, color.Reset)
-	}
-
 	return messages, nil
 }
