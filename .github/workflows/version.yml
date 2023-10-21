@@ -6,7 +6,6 @@ on:
 
 jobs:
   write-version:
-    needs: [ tests ]
     runs-on: ubuntu-latest
     name: Write Version to File
     steps:
