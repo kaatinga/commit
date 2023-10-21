@@ -45,6 +45,7 @@ func newOpenAIResponse(response openai.ChatCompletionMessage) (*OpenAIContextIte
 	if !split {
 		gptContext.Summary = gptContext.Message.Content
 	} else {
+		gptContext.Summary, _ = strings.CutPrefix(gptContext.Summary, "[openAI]")
 		gptContext.Summary = strings.TrimSpace(gptContext.Summary)
 	}
 
