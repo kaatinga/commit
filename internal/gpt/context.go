@@ -99,15 +99,8 @@ func OpenContext() ([]OpenAIContextItem, error) {
 			return nil, fmt.Errorf("failed to decode content from context file: %w", err)
 		}
 
-		var content string
-		if record[2] == openai.ChatMessageRoleUser {
-			content = "[summary]: " + string(decodedContent)
-		} else {
-			content = "[openAI]: " + string(decodedContent)
-		}
-
 		var recordTime time.Time
-		recordTime, err = time.Parse(time.RFC822, record[0])
+		recordTime, err = time.Parse(time.RFC3339, record[0])
 		if err != nil {
 			return nil, fmt.Errorf("failed to parse time from context file: %w", err)
 		}
@@ -115,7 +108,7 @@ func OpenContext() ([]OpenAIContextItem, error) {
 		context = append(context, OpenAIContextItem{
 			Date: recordTime,
 			Message: openai.ChatCompletionMessage{
-				Content: content,
+				Content: string(decodedContent),
 				Role:    record[2],
 			},
 		})
