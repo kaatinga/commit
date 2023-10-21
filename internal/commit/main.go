@@ -58,7 +58,8 @@ You may receive context with these tags:
 - [user]: Commit messages written by the user.
 - [comment]: Additional contextual information.
 
-You MUST NOT use these [summary], [openAI] and any other tags in the response.
+You MUST NOT add [summary], [openAI] and any other tags to the beginning of the lines in the response.
+You MUST NOT add prefixes like 'Commit message:' or 'Summary:' to the beginning of the lines in the response.
 
 Make sure to adhere to this two-line format consistently.
 `
@@ -157,6 +158,7 @@ func prepareRequest() ([]openai.ChatCompletionMessage, error) {
 	})
 
 	// for _, message := range messages {
+	// 	fmt.Println("---")
 	// 	fmt.Printf("%s%s%s\n", color.Yellow, message.Content, color.Reset)
 	// }
 

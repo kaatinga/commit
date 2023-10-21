@@ -1,12 +1,12 @@
 package gpt
 
 import (
+	"encoding/base64"
 	"encoding/csv"
 	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/sashabaranov/go-openai"
@@ -38,18 +38,21 @@ func (gptContext *OpenAIContextItem) Persist() error {
 	writer.Comma = csvSeparator
 	defer writer.Flush()
 
-	return writer.Write([]string{
-		gptContext.Date.Format(time.RFC822),
-		strings.ReplaceAll(gptContext.Message.Content, "\n", " "),
-		gptContext.Message.Role,
-	})
+	var prefix string
+	if gptContext.Message.Role == openai.ChatMessageRoleUser {
+		prefix = "[user]: "
+	} else {
+		prefix = "[openAI]: "
+	}
+	content := prefix + base64.StdEncoding.EncodeToString([]byte(gptContext.Message.Content))
+	return writer.Write([]string{gptContext.Date.Format(time.RFC3339), content, gptContext.Message.Role})
 }
 
 // OpenContext method reads openai message history to recover context from the file in .commit/context.csv.
 func OpenContext() ([]OpenAIContextItem, error) {
 	absoluteFileName, err := filepath.Abs(settings.ContextAbsolutePath)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to get absolute path to context file: %w", err)
 	}
 	file, err := os.Open(absoluteFileName)
 	if err != nil {
@@ -83,18 +86,24 @@ func OpenContext() ([]OpenAIContextItem, error) {
 	var records [][]string
 	reader := csv.NewReader(file)
 	reader.Comma = csvSeparator
+	reader.LazyQuotes = true
 	records, err = reader.ReadAll()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to read context file: %w", err)
 	}
 
 	var context = make([]OpenAIContextItem, 0, len(records))
 	for _, record := range records {
+		decodedContent, err := base64.StdEncoding.DecodeString(record[1])
+		if err != nil {
+			return nil, fmt.Errorf("failed to decode content from context file: %w", err)
+		}
+
 		var content string
 		if record[2] == openai.ChatMessageRoleUser {
-			content = "[summary]" + record[1]
+			content = "[summary]: " + string(decodedContent)
 		} else {
-			content = "[openAI]" + record[1]
+			content = "[openAI]: " + string(decodedContent)
 		}
 
 		var recordTime time.Time

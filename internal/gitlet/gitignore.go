@@ -17,7 +17,7 @@ func UpdateGitIgnore(err error) error {
 	}
 	defer gitIgnoreFile.Close()
 
-	// check that .gitoignore contains .commit folder
+	// check that .gitignore contains .commit folder
 	var gitIgnoreContent []byte
 	gitIgnoreContent, err = os.ReadFile(filepath.Join(settings.RepositoryPath, ".gitignore"))
 	if err != nil {
