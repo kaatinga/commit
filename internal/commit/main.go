@@ -105,7 +105,10 @@ func Generate(cCtx *cli.Context) error {
 		},
 		Date: response.Date.Add(-2 * time.Second),
 	}
-	userRequest.Persist()
+	err = userRequest.Persist()
+	if err != nil {
+		return err
+	}
 
 	err = response.Persist()
 	if err != nil {

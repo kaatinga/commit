@@ -29,7 +29,7 @@ func (gptContext *OpenAIContextItem) Persist() error {
 	}
 	defer contextFile.Close()
 
-	err = gitlet.UpdateGitIgnore(err)
+	err = gitlet.UpdateGitIgnore()
 	if err != nil {
 		return err
 	}

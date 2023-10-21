@@ -8,10 +8,9 @@ import (
 	"path/filepath"
 )
 
-func UpdateGitIgnore(err error) error {
+func UpdateGitIgnore() error {
 	// update .gitignore if needed
-	var gitIgnoreFile *os.File
-	gitIgnoreFile, err = os.OpenFile(filepath.Join(settings.RepositoryPath, ".gitignore"), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	gitIgnoreFile, err := os.OpenFile(filepath.Join(settings.RepositoryPath, ".gitignore"), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		return fmt.Errorf("failed to open/create .gitignore file: %w", err)
 	}
