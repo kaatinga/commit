@@ -6,6 +6,7 @@ on:
 
 jobs:
   write-version:
+    needs: [ tests ]
     runs-on: ubuntu-latest
     name: Write Version to File
     steps:
@@ -13,5 +14,5 @@ jobs:
       - name: Update version
         uses: brettdorrans/write-version-to-file@master
         with:
-          filename: '/.VERSION'
+          filename: '.VERSION'
           placeholder: '${VERSION}'
