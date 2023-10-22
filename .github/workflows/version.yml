@@ -1,17 +1,25 @@
-name: Write Version to File
+name: Update tag.txt file
+
 on:
   push:
-    branches:
-      - main
+    tags:
+      - '*'
 
 jobs:
-  write-version:
+  update_tag:
     runs-on: ubuntu-latest
-    name: Write Version to File
+
     steps:
-      - uses: actions/checkout@master
-      - name: Update version
-        uses: brettdorrans/write-version-to-file@master
-        with:
-          filename: '.VERSION'
-          placeholder: '${VERSION}'
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Write current tag to file
+        run: echo ${GITHUB_REF#refs/tags/} > VERSION
+
+      - name: Commit and push
+        run: |
+          git config --local user.email "painter@3lines.club"
+          git config --local user.name "Michael Gunkoff via GitHub Action"
+          git add VERSION
+          git commit -m "Update tag.txt with current tag" -a || echo "No changes to commit"
+          git push
