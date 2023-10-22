@@ -31,15 +31,22 @@ jobs:
           git config --local user.name "Michael Gunkoff via GitHub Action"
           git add VERSION
           git commit -m "Update VERSION with current tag" || echo "No changes to commit"
-          
+
+          # Save the SHA of the new commit for later use
+          NEW_COMMIT_SHA=$(git rev-parse HEAD)
+
+          # Checkout the main branch and merge the changes from our new commit
+          git checkout main
+          git merge $NEW_COMMIT_SHA
+
           # Delete the old tag locally and remotely
           git tag -d $CURRENT_TAG
           git push --delete origin $CURRENT_TAG
-          
+
           # Create the tag again, now pointing to the new commit
           git tag $CURRENT_TAG
-          
+
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/kaatinga/commit.git
-          echo "Pushing changes and recreated tag to repository"
-          git push origin HEAD:${{ github.ref }}
+          echo "Pushing changes, recreated tag to repository, and main branch"
+          git push origin main
           git push origin $CURRENT_TAG
