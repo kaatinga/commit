@@ -17,16 +17,18 @@ var version = "unknown"
 func init() {
 	file, err := os.Open("VERSION")
 	if err != nil {
-		log.Fatal(err)
+		return
 	}
 
 	var data []byte
 	data, err = io.ReadAll(file)
 	if err != nil {
-		log.Fatal(err)
+		return
 	}
 
-	version = string(data)
+	if len(data) > 0 {
+		version = string(data)
+	}
 }
 
 func main() {
