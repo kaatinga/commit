@@ -1,4 +1,4 @@
-name: Update VERSION file
+name: Update VERSION file and recreate the tag
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - '*'
 
 jobs:
-  update_tag:
+  update_version_and_retag:
     runs-on: ubuntu-latest
 
     steps:
@@ -15,15 +15,31 @@ jobs:
         with:
           ref: ${{ github.ref }}
 
-      - name: Write current tag to file
-        run: echo ${GITHUB_REF#refs/tags/} > VERSION
+      - name: Extract current tag
+        id: version
+        run: |
+          CURRENT_TAG=${GITHUB_REF#refs/tags/}
+          echo "CURRENT_TAG=$CURRENT_TAG" >> $GITHUB_ENV
+          echo "Current tag: $CURRENT_TAG"
 
-      - name: Commit and push
+      - name: Write current version to VERSION file
+        run: echo $CURRENT_TAG > VERSION
+
+      - name: Commit, delete old tag, recreate tag, and push
         run: |
           git config --local user.email "painter@3lines.club"
           git config --local user.name "Michael Gunkoff via GitHub Action"
           git add VERSION
-          git commit -m "Update VERSION with current tag" -a || echo "No changes to commit"
+          git commit -m "Update VERSION with current tag" || echo "No changes to commit"
+          
+          # Delete the old tag locally and remotely
+          git tag -d $CURRENT_TAG
+          git push --delete origin $CURRENT_TAG
+          
+          # Create the tag again, now pointing to the new commit
+          git tag $CURRENT_TAG
+          
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/kaatinga/commit.git
-          echo "Pushing to repository"
-          git push origin ${{ github.ref }}
+          echo "Pushing changes and recreated tag to repository"
+          git push origin HEAD:${{ github.ref }}
+          git push origin $CURRENT_TAG
