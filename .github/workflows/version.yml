@@ -54,12 +54,13 @@ jobs:
 
       - name: Update Draft to Release or Create GitHub Release
         run: |
-          # Get Release ID and draft status for the current tag (if it exists)
+          # Fetch release data for the current tag
           RESPONSE_JSON=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
                                 -H "Accept: application/vnd.github.v3+json" \
                                 https://api.github.com/repos/${{ github.repository }}/releases/tags/$CURRENT_TAG)
           RELEASE_ID=$(echo $RESPONSE_JSON | jq '.id')
           DRAFT_STATUS=$(echo $RESPONSE_JSON | jq '.draft')
+          RELEASE_NAME=$(echo $RESPONSE_JSON | jq '.name')
 
           # If a release ID was found and it's a draft, update the release to non-draft
           if [[ "$RELEASE_ID" != "null" && "$DRAFT_STATUS" == "true" ]]; then
@@ -68,10 +69,12 @@ jobs:
                  -H "Accept: application/vnd.github.v3+json" \
                  https://api.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID \
                  -d '{
-                     "draft": false
+                     "draft": false,
+                     "name": '"$RELEASE_NAME"'
                    }'
           elif [[ "$RELEASE_ID" == "null" ]]; then
             # If no release was found, create a new release for the tag
+            # (Note: Adjust the name as needed. For now, I'm retaining the original logic.)
             curl -s -X POST \
                  -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
                  -H "Accept: application/vnd.github.v3+json" \
@@ -84,4 +87,5 @@ jobs:
                      "prerelease": false
                    }'
           fi
+      
       
