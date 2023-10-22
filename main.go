@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"io"
 	"log"
 	"os"
@@ -27,7 +28,7 @@ func init() {
 	}
 
 	if len(data) > 0 {
-		version = string(data)
+		version = string(bytes.TrimSpace(data))
 	}
 }
 
