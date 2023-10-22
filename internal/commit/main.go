@@ -39,8 +39,8 @@ SUMMARY will be stored as context for future requests to you for this repository
 - "Line 22: added a new function to calculate the sum of two numbers."
 - "Line 490: use "if err != nil" to check for errors. Line 3: changed the function name from "Sum" to "Add".
 
-If request does not contain code diff, but the file is present in the Files, then COMMIT MESSAGE and SUMMARY MUST contain information about the file. Examples:
-- An unknown change in the file ".gitignore".
+If request does not contain code diff, but the file is present in the Files, then COMMIT MESSAGE and SUMMARY MUST contain information about the file. Example:
+- A change in the file ".gitignore".
 
 Expect the request format:
 Files:
@@ -58,8 +58,8 @@ You may receive context with these tags:
 - [user]: Commit messages written by the user.
 - [comment]: Additional contextual information.
 
-You MUST NOT add [summary], [openAI] and any other tags to the beginning of the lines in the response.
-You MUST NOT add prefixes like 'Commit message:' or 'Summary:' to the beginning of the lines in the response.
+Commit API MUST NOT add [summary], [openAI] and any other tags to the beginning of the lines in the response.
+Commit API MUST NOT add prefixes like "Commit message:" or "Summary:" to the beginning of the lines in the response.
 
 Make sure to adhere to this two-line format consistently.
 `
