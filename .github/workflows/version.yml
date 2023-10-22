@@ -24,5 +24,6 @@ jobs:
           git config --local user.name "Michael Gunkoff via GitHub Action"
           git add VERSION
           git commit -m "Update VERSION with current tag" -a || echo "No changes to commit"
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/kaatinga/commit.git
           echo "Pushing to repository"
           git push origin ${{ github.ref }}
