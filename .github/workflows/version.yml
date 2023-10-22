@@ -51,6 +51,9 @@ jobs:
           echo "Pushing changes, recreated tag to repository, and main branch"
           git push origin main
           git push origin $CURRENT_TAG
+          
+          echo "Waiting for a few seconds to ensure GitHub recognizes the new tag..."
+          sleep 10  # waits for 10 seconds
 
       - name: Update Draft to Release or Create GitHub Release
         run: |
