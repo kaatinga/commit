@@ -57,16 +57,19 @@ jobs:
 
       - name: Update Draft to Release or Create GitHub Release
         run: |
-          # Fetch release data for the current tag
-          RESPONSE_JSON=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-                                -H "Accept: application/vnd.github.v3+json" \
-                                https://api.github.com/repos/${{ github.repository }}/releases/tags/$CURRENT_TAG)
-          RELEASE_ID=$(echo $RESPONSE_JSON | jq '.id')
-          DRAFT_STATUS=$(echo $RESPONSE_JSON | jq '.draft')
-          RELEASE_NAME=$(echo $RESPONSE_JSON | jq '.name')
+          # Fetch all draft releases
+          DRAFTS_JSON=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                             -H "Accept: application/vnd.github.v3+json" \
+                             https://api.github.com/repos/${{ github.repository }}/releases)
 
-          # If a release ID was found and it's a draft, update the release to non-draft
-          if [[ "$RELEASE_ID" != "null" && "$DRAFT_STATUS" == "true" ]]; then
+          # Check if a draft for the current tag exists
+          DRAFT_DATA=$(echo $DRAFTS_JSON | jq '.[] | select(.draft==true and .tag_name=="'"$CURRENT_TAG"'")')
+          DRAFT_EXISTS=$(echo -n $DRAFT_DATA | wc -c)
+          RELEASE_ID=$(echo $DRAFT_DATA | jq '.id')
+          RELEASE_NAME=$(echo $DRAFT_DATA | jq '.name')
+
+          # If a draft exists for the tag, update it to a release
+          if [[ $DRAFT_EXISTS -gt 0 ]]; then
             curl -s -X PATCH \
                  -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
                  -H "Accept: application/vnd.github.v3+json" \
@@ -75,20 +78,17 @@ jobs:
                      "draft": false,
                      "name": '"$RELEASE_NAME"'
                    }'
-          elif [[ "$RELEASE_ID" == "null" ]]; then
-            # If no release was found, create a new release for the tag
-            # (Note: Adjust the name as needed. For now, I'm retaining the original logic.)
+          else
+            # If no draft was found, create a new release for the tag
             curl -s -X POST \
                  -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
                  -H "Accept: application/vnd.github.v3+json" \
                  https://api.github.com/repos/${{ github.repository }}/releases \
                  -d '{
                      "tag_name": "'"$CURRENT_TAG"'",
-                     "name": "'"$CURRENT_TAG"' Release",
+                     "name": "'"$CURRENT_TAG"'",
                      "body": "Release for version '"$CURRENT_TAG"'",
                      "draft": false,
                      "prerelease": false
                    }'
           fi
-      
-      
