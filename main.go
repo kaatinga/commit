@@ -58,7 +58,7 @@ func main() {
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:  "key",
-				Usage: "provide a valid key to work with chatGPT",
+				Usage: "provide a valid key to work with openAI API",
 				Action: func(context *cli.Context, s string) error {
 					if len(s) != 51 {
 						return cli.Exit("invalid key ", 1)
@@ -74,7 +74,8 @@ func main() {
 					if s != "" {
 						settings.Path = s
 					}
-					return nil
+
+					return settings.DefinePaths()
 				},
 			},
 		},

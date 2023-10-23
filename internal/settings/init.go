@@ -11,15 +11,24 @@ const (
 )
 
 var (
-	RepositoryPath, ContextAbsolutePath string
+	ContextAbsolutePath string
+	RepositoryPath      string
 )
 
 func init() {
-	var err error
-	RepositoryPath, err = filepath.Abs(Path)
+	err := DefinePaths()
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func DefinePaths() error {
+	var err error
+	RepositoryPath, err = filepath.Abs(Path)
+	if err != nil {
+		return err
+	}
 
 	ContextAbsolutePath = filepath.Join(RepositoryPath, ContextFolder, contextFile)
+	return nil
 }
