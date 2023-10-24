@@ -22,6 +22,11 @@ func UpdateGitIgnore() error {
 
 		globalGitIgnorePath = filepath.Join(homeDir, defaultGlobalGitIgnoreFile)
 		fmt.Println("⚠️ Unable to read global .gitignore file path, using default one:" + globalGitIgnorePath)
+		_, err = RunCommand("git config --global core.excludesfile "+globalGitIgnorePath, "")
+		if err != nil {
+			fmt.Printf("⚠️ Unable to set global .gitignore file path: %s\n", err)
+			return nil
+		}
 	}
 
 	fmt.Printf("globalGitIgnorePath: %s, length: %d\n", globalGitIgnorePath, len(globalGitIgnorePath))
