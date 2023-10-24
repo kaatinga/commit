@@ -14,6 +14,7 @@ func UpdateGitIgnore() error {
 	// git config --get core.excludesfile
 	var globalGitIgnoreMustBeUpdated bool
 	globalGitIgnorePath, err := RunCommand("git config --get core.excludesfile", "")
+	fmt.Println("globalGitIgnorePath", globalGitIgnorePath)
 	if err != nil {
 		return fmt.Errorf("failed to get global .gitignore path: %w", err)
 	} else {

@@ -84,6 +84,7 @@ func Generate(cCtx *cli.Context) error {
 	var response *gpt.OpenAIContextItem
 	response, err = gpt.NewRequest(ctx, settings.APIKey, gptRequest)
 	if err != nil {
+		fmt.Printf("error type %T\n", err)
 		return err
 	}
 
