@@ -27,6 +27,8 @@ func UpdateGitIgnore() error {
 			fmt.Printf("⚠️ Unable to set global .gitignore file path: %s\n", err)
 			return nil
 		}
+
+		fmt.Printf("📝 Set global .gitignore file path to %s\n", globalGitIgnorePath)
 	}
 
 	fmt.Printf("globalGitIgnorePath: %s, length: %d\n", globalGitIgnorePath, len(globalGitIgnorePath))
@@ -38,7 +40,7 @@ func UpdateGitIgnore() error {
 		return fmt.Errorf("failed to read global .gitignore file: %w", err)
 	}
 
-	if !bytes.Contains(globalGitIgnoreContent, []byte(settings.ContextFolder)) {
+	if !bytes.Contains(globalGitIgnoreContent, []byte(settings.KaatingaFolder)) {
 		globalGitIgnoreMustBeUpdated = true
 	}
 
@@ -50,12 +52,12 @@ func UpdateGitIgnore() error {
 		}
 		defer globalGitIgnoreFile.Close()
 
-		_, err = globalGitIgnoreFile.WriteString(settings.ContextFolder + "/\n")
+		_, err = globalGitIgnoreFile.WriteString(settings.KaatingaFolder + "/\n")
 		if err != nil {
 			return fmt.Errorf("failed to write global .gitignore file: %w", err)
 		}
 
-		fmt.Printf("📝 Added %s to global .gitignore\n", settings.ContextFolder)
+		fmt.Printf("📝 Added %s to global .gitignore\n", settings.KaatingaFolder)
 	}
 
 	return nil

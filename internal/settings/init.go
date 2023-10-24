@@ -6,8 +6,9 @@ import (
 )
 
 const (
-	ContextFolder = ".commit"
-	contextFile   = "context.csv"
+	ContextFolder  = "commit"
+	KaatingaFolder = ".kaatinga"
+	contextFile    = "context.csv"
 )
 
 var (
@@ -29,6 +30,6 @@ func DefinePaths() error {
 		return err
 	}
 
-	ContextAbsolutePath = filepath.Join(RepositoryPath, ContextFolder, contextFile)
+	ContextAbsolutePath = filepath.Join(RepositoryPath, KaatingaFolder, ContextFolder, contextFile)
 	return nil
 }

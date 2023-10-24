@@ -49,9 +49,9 @@ func OpenContext() ([]OpenAIContextItem, error) {
 		var pathError = new(os.PathError)
 		if errors.As(err, &pathError) {
 			// create .context folder
-			err := os.Mkdir(filepath.Join(settings.RepositoryPath, settings.ContextFolder), 0755)
+			err := os.MkdirAll(filepath.Join(settings.RepositoryPath, settings.KaatingaFolder, settings.ContextFolder), 0755)
 			if err != nil {
-				return nil, fmt.Errorf("failed to create .commit folder: %w", err)
+				return nil, fmt.Errorf("failed to create .kaatinga/commit folder: %w", err)
 			}
 
 			// create empty context.csv file
