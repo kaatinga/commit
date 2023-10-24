@@ -5,29 +5,45 @@ import (
 	"fmt"
 	"github.com/kaatinga/commit/internal/settings"
 	"os"
-	"path/filepath"
 )
 
+const defaultGlobalGitIgnore = "~/.gitignore_global"
+
 func UpdateGitIgnore() error {
-	// update .gitignore if needed
-	gitIgnoreFile, err := os.OpenFile(filepath.Join(settings.RepositoryPath, ".gitignore"), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	// first, check that global .gitignore exists
+	// git config --get core.excludesfile
+	var globalGitIgnoreMustBeUpdated bool
+	globalGitIgnorePath, err := RunCommand("git config --get core.excludesfile", "")
 	if err != nil {
-		return fmt.Errorf("failed to open/create .gitignore file: %w", err)
-	}
-	defer gitIgnoreFile.Close()
-
-	// check that .gitignore contains .commit folder
-	var gitIgnoreContent []byte
-	gitIgnoreContent, err = os.ReadFile(filepath.Join(settings.RepositoryPath, ".gitignore"))
-	if err != nil {
-		return fmt.Errorf("failed to read .gitignore file: %w", err)
-	}
-
-	if !bytes.Contains(gitIgnoreContent, []byte(settings.ContextFolder)) {
-		_, err = gitIgnoreFile.WriteString(settings.ContextFolder + "/\n")
+		return fmt.Errorf("failed to get global .gitignore path: %w", err)
+	} else {
+		// check that global .gitignore contains .commit folder
+		var globalGitIgnoreContent []byte
+		globalGitIgnoreContent, err = os.ReadFile(globalGitIgnorePath)
 		if err != nil {
-			return fmt.Errorf("failed to write .gitignore file: %w", err)
+			return fmt.Errorf("failed to read global .gitignore file: %w", err)
+		}
+
+		if !bytes.Contains(globalGitIgnoreContent, []byte(settings.ContextFolder)) {
+			globalGitIgnoreMustBeUpdated = true
 		}
 	}
+
+	// add .commit folder to global .gitignore
+	if !globalGitIgnoreMustBeUpdated {
+		globalGitIgnoreFile, err := os.OpenFile(defaultGlobalGitIgnore, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		if err != nil {
+			return fmt.Errorf("failed to open/create global .gitignore file: %w", err)
+		}
+		defer globalGitIgnoreFile.Close()
+
+		_, err = globalGitIgnoreFile.WriteString(settings.ContextFolder + "/\n")
+		if err != nil {
+			return fmt.Errorf("failed to write global .gitignore file: %w", err)
+		}
+
+		fmt.Printf("📝 Added %s to global .gitignore\n", settings.ContextFolder)
+	}
+
 	return nil
 }
