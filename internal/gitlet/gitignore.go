@@ -25,6 +25,8 @@ func UpdateGitIgnore() error {
 			return fmt.Errorf("failed to read global .gitignore file: %w", err)
 		}
 
+		fmt.Println("globalGitIgnoreContent", string(globalGitIgnoreContent))
+
 		if !bytes.Contains(globalGitIgnoreContent, []byte(settings.ContextFolder)) {
 			globalGitIgnoreMustBeUpdated = true
 		}

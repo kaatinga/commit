@@ -42,6 +42,7 @@ func newOpenAIResponse(response openai.ChatCompletionMessage) (*OpenAIContextIte
 	var split bool
 	gptContext.Message.Content, gptContext.Summary, split = strings.Cut(response.Content, "\n")
 	gptContext.Message.Content, _ = strings.CutPrefix(gptContext.Message.Content, "[openAI]:")
+	gptContext.Message.Content, _ = strings.CutPrefix(gptContext.Message.Content, "Commit message:")
 	gptContext.Message.Content = strings.TrimSpace(gptContext.Message.Content)
 	if !split {
 		gptContext.Summary = gptContext.Message.Content

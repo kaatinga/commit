@@ -106,6 +106,12 @@ func Generate(cCtx *cli.Context) error {
 		},
 		Date: response.Date.Add(-2 * time.Second),
 	}
+
+	err = gitlet.UpdateGitIgnore()
+	if err != nil {
+		return err
+	}
+
 	err = userRequest.Persist()
 	if err != nil {
 		return err

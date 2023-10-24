@@ -11,7 +11,6 @@ import (
 
 	"github.com/sashabaranov/go-openai"
 
-	"github.com/kaatinga/commit/internal/gitlet"
 	"github.com/kaatinga/commit/internal/settings"
 )
 
@@ -28,11 +27,6 @@ func (gptContext *OpenAIContextItem) Persist() error {
 		return fmt.Errorf("failed to open context file so as to save context: %w", err)
 	}
 	defer contextFile.Close()
-
-	err = gitlet.UpdateGitIgnore()
-	if err != nil {
-		return err
-	}
 
 	writer := csv.NewWriter(contextFile)
 	writer.Comma = csvSeparator
