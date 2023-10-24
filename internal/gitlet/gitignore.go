@@ -13,7 +13,6 @@ const defaultGlobalGitIgnoreFile = ".gitignore_global"
 func UpdateGitIgnore() error {
 	var globalGitIgnoreMustBeUpdated bool
 	globalGitIgnorePath, err := RunCommand("git config --get core.excludesfile", "")
-	fmt.Println("globalGitIgnorePath", globalGitIgnorePath)
 	if err != nil {
 		homeDir, err := os.UserHomeDir()
 		if err != nil {
@@ -30,8 +29,6 @@ func UpdateGitIgnore() error {
 
 		fmt.Printf("📝 Set global .gitignore file path to %s\n", globalGitIgnorePath)
 	}
-
-	fmt.Printf("globalGitIgnorePath: %s, length: %d\n", globalGitIgnorePath, len(globalGitIgnorePath))
 
 	// check that global .gitignore contains .commit folder
 	var globalGitIgnoreContent []byte
