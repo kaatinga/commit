@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"github.com/kaatinga/commit/internal/settings"
 	"os"
+	"path/filepath"
 )
 
-const defaultGlobalGitIgnore = "~/.gitignore_global"
+const defaultGlobalGitIgnoreFile = ".gitignore_global"
 
 func UpdateGitIgnore() error {
 	// first, check that global .gitignore exists
@@ -25,7 +26,7 @@ func UpdateGitIgnore() error {
 			return fmt.Errorf("failed to read global .gitignore file: %w", err)
 		}
 
-		fmt.Println("globalGitIgnoreContent", string(globalGitIgnoreContent))
+		fmt.Println("globalGitIgnoreContent:\n", string(globalGitIgnoreContent))
 
 		if !bytes.Contains(globalGitIgnoreContent, []byte(settings.ContextFolder)) {
 			globalGitIgnoreMustBeUpdated = true
@@ -33,8 +34,12 @@ func UpdateGitIgnore() error {
 	}
 
 	// add .commit folder to global .gitignore
-	if !globalGitIgnoreMustBeUpdated {
-		globalGitIgnoreFile, err := os.OpenFile(defaultGlobalGitIgnore, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if globalGitIgnoreMustBeUpdated {
+		homeDir, err := os.UserHomeDir()
+		if err != nil {
+			return fmt.Errorf("failed to get user home directory: %w", err)
+		}
+		globalGitIgnoreFile, err := os.OpenFile(filepath.Join(homeDir, defaultGlobalGitIgnoreFile), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 		if err != nil {
 			return fmt.Errorf("failed to open/create global .gitignore file: %w", err)
 		}
