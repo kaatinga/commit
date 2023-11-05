@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"github.com/kaatinga/commit/internal/gitlet"
 	"io"
 	"log"
 	"os"
@@ -53,6 +54,10 @@ func main() {
 				Name:   "commit",
 				Action: commit.Generate,
 				Hidden: true,
+			},
+			{
+				Name:   "push",
+				Action: gitlet.Push(commit.Generate),
 			},
 		},
 		Flags: []cli.Flag{
