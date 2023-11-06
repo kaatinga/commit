@@ -1,18 +1,17 @@
 package gitlet
 
 import (
-	"github.com/kaatinga/commit/internal/settings"
+	"fmt"
+
 	"github.com/urfave/cli/v2"
 )
 
-func Push(callback func(cCtx *cli.Context) error) func(cCtx *cli.Context) error {
-	return func(cCtx *cli.Context) error {
-		err := callback(cCtx)
-		if err != nil {
-			return err
-		}
-
-		_, err = RunCommand("git push", settings.Path)
-		return err
+func Push(cCtx *cli.Context) error {
+	err := Repo.Push(nil)
+	if err != nil {
+		return fmt.Errorf("error pushing to remote: %w", err)
 	}
+
+	fmt.Println("🚀 Commit pushed!")
+	return nil
 }

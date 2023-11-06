@@ -3,13 +3,13 @@ package gitlet
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"github.com/kaatinga/commit/internal/settings"
 	"io"
 	"os/exec"
 	"strings"
 	"time"
 
-	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing/object"
 )
@@ -22,26 +22,20 @@ func GetFileList() (string, error) {
 	return RunCommand(`git diff --name-only --diff-algorithm=minimal`, settings.Path)
 }
 
-type GitInfo struct {
-	Repo *git.Repository
-	Msg  string
+type Message struct {
+	Msg string
 	object.Signature
 }
 
-func NewGitInfo(msg string) (*GitInfo, error) {
-	gitInfo := &GitInfo{Msg: msg}
-	var err error
-	gitInfo.Repo, err = git.PlainOpen(settings.RepositoryPath)
-	if err != nil {
-		return nil, err
-	}
+func NewGitInfo(msg string) (*Message, error) {
+	gitInfo := &Message{Msg: msg}
 
 	// get user info
-	var gitConfig *config.Config
-	gitConfig, err = gitInfo.Repo.ConfigScoped(config.GlobalScope)
+	gitConfig, err := Repo.ConfigScoped(config.GlobalScope)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("unable to get git config: %w", err)
 	}
+
 	gitInfo.Name = gitConfig.User.Name
 	gitInfo.Email = gitConfig.User.Email
 	gitInfo.When = time.Now()

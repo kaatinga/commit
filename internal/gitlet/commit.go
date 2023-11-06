@@ -2,10 +2,8 @@ package gitlet
 
 import "github.com/go-git/go-git/v5"
 
-func (gi *GitInfo) Commit() error {
-	repo := gi.Repo
-
-	wt, err := repo.Worktree()
+func (gi *Message) Commit() error {
+	wt, err := Repo.Worktree()
 	if err != nil {
 		return err
 	}

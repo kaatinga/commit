@@ -41,11 +41,11 @@ func TestNewGitInfo(t *testing.T) {
 	tests := []struct {
 		name        string
 		args        args
-		wantGitInfo *GitInfo
+		wantGitInfo *Message
 		wantErr     bool
 	}{
 		{name: "test1", args: args{".", "test"},
-			wantGitInfo: &GitInfo{
+			wantGitInfo: &Message{
 				Msg: "test",
 				Signature: object.Signature{
 					Name:  "Michael",

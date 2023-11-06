@@ -34,6 +34,8 @@ func init() {
 }
 
 func main() {
+	gitlet.Init()
+
 	app := &cli.App{
 		Name:           "A git commit CLI tool",
 		Description:    "Commit helps to generate commit messages.",
@@ -57,7 +59,7 @@ func main() {
 			},
 			{
 				Name:   "push",
-				Action: gitlet.Push(commit.Generate),
+				Action: actionChain(commit.Generate, gitlet.Push),
 			},
 		},
 		Flags: []cli.Flag{

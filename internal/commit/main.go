@@ -87,7 +87,7 @@ func Generate(cCtx *cli.Context) error {
 		return err
 	}
 
-	var gitInfo *gitlet.GitInfo
+	var gitInfo *gitlet.Message
 	gitInfo, err = gitlet.NewGitInfo(response.Message.Content)
 	if err != nil {
 		return err

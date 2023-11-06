@@ -1,6 +1,7 @@
 package settings
 
 import (
+	"fmt"
 	"log"
 	"path/filepath"
 )
@@ -23,11 +24,10 @@ func init() {
 	}
 }
 
-func DefinePaths() error {
-	var err error
+func DefinePaths() (err error) {
 	RepositoryPath, err = filepath.Abs(Path)
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to get absolute path: %w", err)
 	}
 
 	ContextAbsolutePath = filepath.Join(RepositoryPath, KaatingaFolder, ContextFolder, contextFile)
