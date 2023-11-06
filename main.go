@@ -2,12 +2,12 @@ package main
 
 import (
 	"bytes"
-	"github.com/kaatinga/commit/internal/gitlet"
 	"io"
 	"log"
 	"os"
 	"time"
 
+	"github.com/kaatinga/commit/internal/gitlet"
 	"github.com/urfave/cli/v2"
 
 	"github.com/kaatinga/commit/internal/commit"
@@ -44,13 +44,11 @@ func main() {
 		Compiled:       time.Now(),
 		Authors: []*cli.Author{
 			{
-				Name:  "Michael Gunkoff",
-				Email: "kaatinga@gmail.com",
+				Name: "Michael Gunkoff",
 			},
 		},
-		Copyright: "(c) Michael Gunkoff",
-		HelpName:  "commit",
-		Usage:     "automatic commit message generator",
+		HelpName: "commit",
+		Usage:    "automatic commit message generator",
 		Commands: []*cli.Command{
 			{
 				Name:   "commit",
