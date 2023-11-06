@@ -20,7 +20,7 @@ func NewRequest(ctx context.Context, apiKey string, messages []openai.ChatComple
 	resp, err := client.CreateChatCompletion(
 		ctx,
 		openai.ChatCompletionRequest{
-			Model:       openai.GPT3Dot5Turbo16K0613,
+			Model:       openai.GPT3Dot5Turbo1106,
 			MaxTokens:   135,
 			Temperature: 0.7,
 			Messages:    messages,

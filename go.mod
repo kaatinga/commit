@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/go-git/go-git/v5 v5.9.0
-	github.com/sashabaranov/go-openai v1.16.0
+	github.com/sashabaranov/go-openai v1.16.1
 	github.com/stretchr/testify v1.4.0
 	github.com/urfave/cli/v2 v2.25.7
 )

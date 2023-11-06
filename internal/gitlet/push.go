@@ -2,6 +2,7 @@ package gitlet
 
 import (
 	"fmt"
+
 	"github.com/kaatinga/commit/internal/settings"
 
 	"github.com/urfave/cli/v2"
