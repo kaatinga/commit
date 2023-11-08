@@ -10,11 +10,18 @@ import (
 
 func Push(_ *cli.Context) error {
 	stdOut, stdErr := RunCommand("git fetch", settings.Path)
-	fmt.Println(stdOut)
-	fmt.Println(stdErr)
+	printOutput(stdOut)
+	printOutput(stdErr)
 
 	stdOut, stdErr = RunCommand("git push", settings.Path)
-	fmt.Println(stdOut)
-	fmt.Println(stdErr)
+	printOutput(stdOut)
+	printOutput(stdErr)
 	return nil
+}
+
+func printOutput(stdOut interface{}) {
+	if stdOut == nil {
+		return
+	}
+	fmt.Println(stdOut)
 }
