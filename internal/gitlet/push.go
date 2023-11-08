@@ -2,6 +2,7 @@ package gitlet
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/kaatinga/commit/internal/settings"
 
@@ -10,18 +11,19 @@ import (
 
 func Push(_ *cli.Context) error {
 	stdOut, stdErr := RunCommand("git fetch", settings.Path)
-	printOutput(stdOut)
-	printOutput(stdErr)
+	printOutput(stdOut, stdErr)
 
 	stdOut, stdErr = RunCommand("git push", settings.Path)
-	printOutput(stdOut)
-	printOutput(stdErr)
+	printOutput(stdOut, stdErr)
 	return nil
 }
 
-func printOutput(stdOut interface{}) {
-	if stdOut == nil {
-		return
+func printOutput(stdOut string, stdErr error) {
+	if stdErr != nil {
+		fmt.Println(stdErr)
 	}
-	fmt.Println(stdOut)
+
+	if strings.TrimSpace(stdOut) != "" {
+		fmt.Println(stdOut)
+	}
 }
