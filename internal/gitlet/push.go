@@ -10,7 +10,7 @@ import (
 )
 
 func Push(_ *cli.Context) error {
-	stdOut, stdErr := RunCommand("git fetch", settings.Path)
+	stdOut, stdErr := RunCommand("git fetch", "")
 	printOutput(stdOut, stdErr)
 
 	stdOut, stdErr = RunCommand("git push", settings.Path)
