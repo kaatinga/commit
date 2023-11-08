@@ -47,7 +47,6 @@ func doOpenAIRequest(ctx context.Context, client *openai.Client, messages []open
 			if attempts < 3 {
 				model = openai.GPT3Dot5Turbo16K0613
 			}
-			fmt.Printf("model: %s\n", model)
 			if openAIError.HTTPStatusCode == 429 || openAIError.HTTPStatusCode >= 500 {
 				return doOpenAIRequest(ctx, client, messages, attempts-1, model)
 			}
