@@ -7,11 +7,11 @@ import (
 	"os"
 	"time"
 
-	"github.com/kaatinga/commit/internal/gitlet"
-	"github.com/urfave/cli/v2"
-
 	"github.com/kaatinga/commit/internal/commit"
+	"github.com/kaatinga/commit/internal/gitlet"
 	"github.com/kaatinga/commit/internal/settings"
+
+	"github.com/urfave/cli/v2"
 )
 
 var version = "unknown"

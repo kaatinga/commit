@@ -4,11 +4,12 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/kaatinga/commit/internal/settings"
 	"io"
 	"os/exec"
 	"strings"
 	"time"
+
+	"github.com/kaatinga/commit/internal/settings"
 
 	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing/object"

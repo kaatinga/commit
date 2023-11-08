@@ -9,9 +9,9 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/sashabaranov/go-openai"
-
 	"github.com/kaatinga/commit/internal/settings"
+
+	"github.com/sashabaranov/go-openai"
 )
 
 const csvSeparator = '🧮'

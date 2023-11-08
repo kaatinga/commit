@@ -3,9 +3,10 @@ package gitlet
 import (
 	"bytes"
 	"fmt"
-	"github.com/kaatinga/commit/internal/settings"
 	"os"
 	"path/filepath"
+
+	"github.com/kaatinga/commit/internal/settings"
 )
 
 const defaultGlobalGitIgnoreFile = ".gitignore_global"

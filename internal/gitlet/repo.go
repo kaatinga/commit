@@ -2,8 +2,10 @@ package gitlet
 
 import (
 	"fmt"
-	"github.com/go-git/go-git/v5"
+
 	"github.com/kaatinga/commit/internal/settings"
+
+	"github.com/go-git/go-git/v5"
 )
 
 var Repo *git.Repository

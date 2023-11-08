@@ -66,6 +66,7 @@ Make sure to adhere to this two-line format consistently.
 )
 
 func Generate(cCtx *cli.Context) error {
+	now := time.Now()
 	if settings.APIKey == "" {
 		return cli.Exit("openAI API key is not specified", 1)
 	}
@@ -103,7 +104,7 @@ func Generate(cCtx *cli.Context) error {
 			Role:    openai.ChatMessageRoleUser,
 			Content: response.Summary,
 		},
-		Date: response.Date.Add(-2 * time.Second),
+		Date: now,
 	}
 
 	err = gitlet.UpdateGitIgnore()

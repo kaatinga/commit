@@ -2,6 +2,8 @@ package gpt
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"strings"
 	"time"
 
@@ -17,20 +19,43 @@ type OpenAIContextItem struct {
 // NewRequest function creates APIContext instance.
 func NewRequest(ctx context.Context, apiKey string, messages []openai.ChatCompletionMessage) (*OpenAIContextItem, error) {
 	client := openai.NewClient(apiKey)
+	resp, err := doOpenAIRequest(ctx, client, messages, 5, openai.GPT3Dot5Turbo1106)
+	if err != nil {
+		return nil, err
+	}
+
+	return newOpenAIResponse(resp.Choices[0].Message)
+}
+
+func doOpenAIRequest(ctx context.Context, client *openai.Client, messages []openai.ChatCompletionMessage, attempts byte, model string) (openai.ChatCompletionResponse, error) {
 	resp, err := client.CreateChatCompletion(
 		ctx,
 		openai.ChatCompletionRequest{
-			Model:       openai.GPT3Dot5Turbo1106,
+			Model:       model,
 			MaxTokens:   135,
 			Temperature: 0.7,
 			Messages:    messages,
 		},
 	)
 	if err != nil {
-		return nil, err
+		fmt.Printf("openAI error: %T\n", err)
+		if attempts == 0 {
+			return openai.ChatCompletionResponse{}, err
+		}
+		var openAIError = new(openai.RequestError)
+		if errors.As(err, &openAIError) {
+			if attempts < 3 {
+				model = openai.GPT3Dot5Turbo16K0613
+			}
+			fmt.Printf("model: %s\n", model)
+			if openAIError.HTTPStatusCode == 429 || openAIError.HTTPStatusCode >= 500 {
+				return doOpenAIRequest(ctx, client, messages, attempts-1, model)
+			}
+		}
+		return openai.ChatCompletionResponse{}, err
 	}
 
-	return newOpenAIResponse(resp.Choices[0].Message)
+	return resp, nil
 }
 
 func newOpenAIResponse(response openai.ChatCompletionMessage) (*OpenAIContextItem, error) {

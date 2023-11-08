@@ -1,23 +1,28 @@
 package gitlet
 
-import "github.com/go-git/go-git/v5"
+import (
+	"fmt"
+
+	"github.com/go-git/go-git/v5"
+)
 
 func (gi *Message) Commit() error {
 	wt, err := Repo.Worktree()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get worktree: %w", err)
 	}
 	dir := wt.Filesystem.Root()
 
-	err = AddAll(dir)
-	if err != nil {
-		return err
+	if err = AddAll(dir); err != nil {
+		return fmt.Errorf("failed to add files: %w", err)
 	}
 
-	_, err = wt.Commit(gi.Msg, &git.CommitOptions{
+	if _, err = wt.Commit(gi.Msg, &git.CommitOptions{
 		Author: &gi.Signature,
-	})
-	return err
+	}); err != nil {
+		return fmt.Errorf("failed to commit: %w", err)
+	}
+	return nil
 }
 
 func AddAll(dir string) error {
