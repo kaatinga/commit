@@ -3,7 +3,6 @@ package gpt
 import (
 	"context"
 	"errors"
-	"fmt"
 	"strings"
 	"time"
 
@@ -38,7 +37,6 @@ func doOpenAIRequest(ctx context.Context, client *openai.Client, messages []open
 		},
 	)
 	if err != nil {
-		fmt.Printf("openAI error: %T\n", err)
 		if attempts == 0 {
 			return openai.ChatCompletionResponse{}, err
 		}
