@@ -20,17 +20,15 @@ var (
 )
 
 func Init() {
-	err := DefinePaths()
-	if err != nil {
+	if err := DefinePaths(); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func DefinePaths() (err error) {
+func DefinePaths() error {
 	RepositoryPath = getRootRepoFolder(Path)
 	if RepositoryPath == "" {
-		fmt.Println("Unable to find git repository")
-		os.Exit(1)
+		return fmt.Errorf("unable to find git repository in %s", Path)
 	}
 
 	ContextAbsolutePath = filepath.Join(RepositoryPath, KaatingaFolder, ContextFolder, contextFile)
