@@ -38,13 +38,7 @@ func (gptContext *OpenAIContextItem) Persist() error {
 
 // OpenContext method reads openai message history to recover context from the file in .commit/context.csv.
 func OpenContext() ([]OpenAIContextItem, error) {
-	absoluteFileName, err := filepath.Abs(settings.ContextAbsolutePath)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get absolute path to context file: %w", err)
-	}
-
-	var file *os.File
-	file, err = os.Open(absoluteFileName)
+	file, err := os.Open(settings.ContextAbsolutePath)
 	if err != nil {
 		var pathError = new(os.PathError)
 		if errors.As(err, &pathError) {
@@ -55,7 +49,7 @@ func OpenContext() ([]OpenAIContextItem, error) {
 			}
 
 			// create empty context.csv file
-			_, err = os.Create(absoluteFileName)
+			_, err = os.Create(settings.ContextAbsolutePath)
 			if err != nil {
 				return nil, fmt.Errorf("failed to create context file: %w", err)
 			}
