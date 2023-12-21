@@ -48,8 +48,6 @@ func getRootRepoFolder(dir string) string {
 		dirUp := filepath.Join(pathItems[:i+1]...)
 		fmt.Printf("dirUp: %s\n", dirUp)
 		dirUp = filepath.Join(prefix, dirUp)
-
-		// check if dirUp has .git folder
 		if _, err := os.Stat(filepath.Join(dirUp, ".git")); err == nil {
 			return dirUp
 		}
