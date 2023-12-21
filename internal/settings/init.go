@@ -32,7 +32,6 @@ func DefinePaths() (err error) {
 		fmt.Println("Unable to find git repository")
 		os.Exit(1)
 	}
-	fmt.Printf("Repository path: %s\n", RepositoryPath)
 
 	ContextAbsolutePath = filepath.Join(RepositoryPath, KaatingaFolder, ContextFolder, contextFile)
 	return nil
@@ -44,7 +43,7 @@ func getRootRepoFolder(dir string) string {
 	if err != nil {
 		fmt.Println("Unable to get absolute path to the directory")
 	}
-	
+
 	pathItems := strings.Split(absDir, string(filepath.Separator))
 
 	var prefix string
