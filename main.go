@@ -34,6 +34,7 @@ func init() {
 }
 
 func main() {
+	settings.Init()
 	gitlet.Init()
 
 	app := &cli.App{
