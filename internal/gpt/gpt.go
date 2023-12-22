@@ -37,9 +37,9 @@ func doOpenAIRequest(ctx context.Context, client *openai.Client, messages []open
 		}
 		var openAIError = new(openai.RequestError)
 		if errors.As(err, &openAIError) {
-			if attempts < 3 {
-				model = openai.GPT3Dot5Turbo16K0613
-			}
+			// if attempts < 3 {
+			// 	model = openai.GPT3Dot5Turbo16K0613
+			// }
 			if openAIError.HTTPStatusCode == 429 || openAIError.HTTPStatusCode >= 500 {
 				return doOpenAIRequest(ctx, client, messages, attempts-1, model)
 			}
@@ -49,7 +49,7 @@ func doOpenAIRequest(ctx context.Context, client *openai.Client, messages []open
 
 	output := newOpenAIResponse(resp.Choices[0].Message)
 	if output.Message.Content == "" && attempts > 0 {
-		fmt.Println("it will take more time to generate a commit message, please wait...")
+		fmt.Println("🐌 It will take more time to generate a commit message, please wait...")
 		return doOpenAIRequest(ctx, client, messages, attempts-1, model)
 	}
 
