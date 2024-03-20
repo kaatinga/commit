@@ -1,3 +1,4 @@
+[![Tests](https://github.com/kaatinga/luna/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/kaatinga/luna/actions/workflows/test.yml)
 [![GitHub release](https://img.shields.io/github/release/kaatinga/commit.svg)](https://github.com/kaatinga/commit/releases)
 [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/kaatinga/commit/blob/main/LICENSE)
 [![lint workflow](https://github.com/kaatinga/commit/actions/workflows/golangci-lint.yml/badge.svg)](https://github.com/kaatinga/commit/actions?query=workflow%3Alinter)
@@ -49,4 +50,3 @@ or just:
 For further help or to view a list of commands, run:
 
     commit help
-[![Tests](https://github.com/kaatinga/luna/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/kaatinga/luna/actions/workflows/test.yml)
