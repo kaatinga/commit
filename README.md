@@ -49,3 +49,4 @@ or just:
 For further help or to view a list of commands, run:
 
     commit help
+[![Tests](https://github.com/kaatinga/luna/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/kaatinga/luna/actions/workflows/test.yml)
