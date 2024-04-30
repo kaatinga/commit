@@ -1,8 +1,6 @@
 package main
 
 import (
-	"bytes"
-	"io"
 	"log"
 	"os"
 	"time"
@@ -14,25 +12,6 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-var version = "unknown"
-
-func init() {
-	file, err := os.Open("VERSION")
-	if err != nil {
-		return
-	}
-
-	var data []byte
-	data, err = io.ReadAll(file)
-	if err != nil {
-		return
-	}
-
-	if len(data) > 0 {
-		version = string(bytes.TrimSpace(data))
-	}
-}
-
 func main() {
 	settings.Init()
 	gitlet.Init()
@@ -41,7 +20,6 @@ func main() {
 		Name:           "A git commit CLI tool",
 		Description:    "Commit helps to generate commit messages.",
 		DefaultCommand: "commit",
-		Version:        version,
 		Compiled:       time.Now(),
 		Authors: []*cli.Author{
 			{

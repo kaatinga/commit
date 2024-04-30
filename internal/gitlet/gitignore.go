@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/kaatinga/commit/internal/settings"
 )
@@ -21,23 +22,31 @@ func UpdateGitIgnore() error {
 		}
 
 		globalGitIgnorePath = filepath.Join(homeDir, defaultGlobalGitIgnoreFile)
-		fmt.Println("⚠️ Unable to read global .gitignore file path, using default one:" + globalGitIgnorePath)
+		fmt.Println("⚠️ Unable to read global gitignore file path, using default one:" + globalGitIgnorePath)
 		_, err = RunCommand("git config --global core.excludesfile "+globalGitIgnorePath, "")
 		if err != nil {
-			fmt.Printf("⚠️ Unable to set global .gitignore file path: %s\n", err)
+			fmt.Printf("⚠️ Unable to set global gitignore file path: %s\n", err)
 			return nil
 		}
 
-		fmt.Printf("📝 Set global .gitignore file path to %s\n", globalGitIgnorePath)
+		fmt.Printf("📝 Set global gitignore file path to %s\n", globalGitIgnorePath)
+	}
+
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return err
+	}
+
+	globalGitIgnorePath = strings.Replace(globalGitIgnorePath, "~", homeDir, 1)
+
+	var globalGitIgnoreContent []byte
+	fmt.Printf("🔍 Reading global gitignore file: %s\n", globalGitIgnorePath)
+	globalGitIgnoreContent, err = os.ReadFile(globalGitIgnorePath)
+	if err != nil {
+		return fmt.Errorf("failed to read global gitignore file: %w", err)
 	}
 
 	// check that global .gitignore contains .commit folder
-	var globalGitIgnoreContent []byte
-	globalGitIgnoreContent, err = os.ReadFile(globalGitIgnorePath)
-	if err != nil {
-		return fmt.Errorf("failed to read global .gitignore file: %w", err)
-	}
-
 	if !bytes.Contains(globalGitIgnoreContent, []byte(settings.KaatingaFolder)) {
 		globalGitIgnoreMustBeUpdated = true
 	}
