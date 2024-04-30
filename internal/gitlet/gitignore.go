@@ -32,10 +32,12 @@ func UpdateGitIgnore() error {
 		fmt.Printf("📝 Set global gitignore file path to %s\n", globalGitIgnorePath)
 	}
 
-	homeDir, err := os.UserHomeDir()
+	var homeDir string
+	homeDir, err = os.UserHomeDir()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get user home directory: %w", err)
 	}
+	fmt.Printf("🏠 User home directory: %s\n", homeDir)
 
 	globalGitIgnorePath = strings.Replace(globalGitIgnorePath, "~", homeDir, 1)
 
@@ -64,7 +66,7 @@ func UpdateGitIgnore() error {
 			return fmt.Errorf("failed to write global .gitignore file: %w", err)
 		}
 
-		fmt.Printf("📝 Added %s to global .gitignore\n", settings.KaatingaFolder)
+		fmt.Printf("📝 Added %s/ to global .gitignore\n", settings.KaatingaFolder)
 	}
 
 	return nil
