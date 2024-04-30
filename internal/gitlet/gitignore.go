@@ -13,14 +13,15 @@ import (
 const defaultGlobalGitIgnoreFile = ".gitignore_global"
 
 func UpdateGitIgnore() error {
-	var globalGitIgnoreMustBeUpdated bool
-	globalGitIgnorePath, err := RunCommand("git config --get core.excludesfile", "")
+	homeDir, err := os.UserHomeDir()
 	if err != nil {
-		homeDir, err := os.UserHomeDir()
-		if err != nil {
-			return fmt.Errorf("failed to get user home directory: %w", err)
-		}
+		return fmt.Errorf("failed to get user home directory: %w", err)
+	}
 
+	var globalGitIgnoreMustBeUpdated bool
+	var globalGitIgnorePath string
+	globalGitIgnorePath, err = RunCommand("git config --get core.excludesfile", "")
+	if err != nil {
 		globalGitIgnorePath = filepath.Join(homeDir, defaultGlobalGitIgnoreFile)
 		fmt.Println("⚠️ Unable to read global gitignore file path, using default one:" + globalGitIgnorePath)
 		_, err = RunCommand("git config --global core.excludesfile "+globalGitIgnorePath, "")
@@ -32,17 +33,9 @@ func UpdateGitIgnore() error {
 		fmt.Printf("📝 Set global gitignore file path to %s\n", globalGitIgnorePath)
 	}
 
-	var homeDir string
-	homeDir, err = os.UserHomeDir()
-	if err != nil {
-		return fmt.Errorf("failed to get user home directory: %w", err)
-	}
-	fmt.Printf("🏠 User home directory: %s\n", homeDir)
-
 	globalGitIgnorePath = strings.Replace(globalGitIgnorePath, "~", homeDir, 1)
 
 	var globalGitIgnoreContent []byte
-	fmt.Printf("🔍 Reading global gitignore file: %s\n", globalGitIgnorePath)
 	globalGitIgnoreContent, err = os.ReadFile(globalGitIgnorePath)
 	if err != nil {
 		return fmt.Errorf("failed to read global gitignore file: %w", err)
