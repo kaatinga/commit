@@ -18,7 +18,7 @@ type OpenAIContextItem struct {
 
 // NewRequest function creates APIContext instance.
 func NewRequest(ctx context.Context, apiKey string, messages []openai.ChatCompletionMessage) (*OpenAIContextItem, error) {
-	return doOpenAIRequest(ctx, openai.NewClient(apiKey), messages, 5, openai.GPT3Dot5Turbo1106)
+	return doOpenAIRequest(ctx, openai.NewClient(apiKey), messages, 5, openai.GPT4Turbo)
 }
 
 func doOpenAIRequest(ctx context.Context, client *openai.Client, messages []openai.ChatCompletionMessage, attempts byte, model string) (*OpenAIContextItem, error) {
