@@ -1,3 +1,6 @@
+//go:build localtests
+// +build localtests
+
 package gitlet
 
 import (
