@@ -18,17 +18,17 @@ type OpenAIContextItem struct {
 
 // NewRequest function creates APIContext instance.
 func NewRequest(ctx context.Context, apiKey string, messages []openai.ChatCompletionMessage) (*OpenAIContextItem, error) {
-	return doOpenAIRequest(ctx, openai.NewClient(apiKey), messages, 5, openai.GPT4oMini)
+	return doOpenAIRequest(ctx, openai.NewClient(apiKey), messages, 5, openai.GPT5Mini)
 }
 
 func doOpenAIRequest(ctx context.Context, client *openai.Client, messages []openai.ChatCompletionMessage, attempts byte, model string) (*OpenAIContextItem, error) {
 	resp, err := client.CreateChatCompletion(
 		ctx,
 		openai.ChatCompletionRequest{
-			Model:       model,
-			MaxTokens:   135,
-			Temperature: 0.7,
-			Messages:    messages,
+			Model:               model,
+			MaxCompletionTokens: 135,
+			Temperature:         0.7,
+			Messages:            messages,
 		},
 	)
 	if err != nil {
@@ -37,9 +37,6 @@ func doOpenAIRequest(ctx context.Context, client *openai.Client, messages []open
 		}
 		var openAIError = new(openai.RequestError)
 		if errors.As(err, &openAIError) {
-			// if attempts < 3 {
-			// 	model = openai.GPT3Dot5Turbo16K0613
-			// }
 			if openAIError.HTTPStatusCode == 429 || openAIError.HTTPStatusCode >= 500 {
 				return doOpenAIRequest(ctx, client, messages, attempts-1, model)
 			}

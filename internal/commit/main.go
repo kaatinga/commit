@@ -7,11 +7,12 @@ import (
 	"time"
 
 	"github.com/go-git/go-git/v5/plumbing/color"
+	"github.com/sashabaranov/go-openai"
+	"github.com/urfave/cli/v2"
+
 	"github.com/kaatinga/commit/internal/gitlet"
 	"github.com/kaatinga/commit/internal/gpt"
 	"github.com/kaatinga/commit/internal/settings"
-	"github.com/sashabaranov/go-openai"
-	"github.com/urfave/cli/v2"
 )
 
 const (
