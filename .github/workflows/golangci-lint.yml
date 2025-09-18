@@ -2,12 +2,17 @@ name: Go Linter
 
 on:
   push:
-    branches-ignore:
-      - none
+    branches:
+      - '**'
     tags-ignore:
       - '*'
     paths:
-      - '**.go'
+      - '**/*.go'
+      - 'go.mod'
+      - '.github/workflows/golangci-lint.yml'
+  pull_request:
+    paths:
+      - '**/*.go'
       - 'go.mod'
 
 jobs:
