@@ -15,9 +15,12 @@ stage all changed files in your git repository and craft a concise, meaningful c
 
 ## Features:
 
-- **AI-Powered**: Leverages OpenAI to generate commit messages.
-- **Automatic Staging**: Stages all changed files in the git repository.
-- **Customizable**: Works with user-provided keys and paths.
+- Leverages OpenAI to generate commit messages based on your code changes.
+- Automatically stages all changed files in the git repository.
+- Commits with the AI-generated message.
+- Optional `push` command to commit and push in one step.
+- Dry-run mode to preview commit messages without committing.
+- Works with user-provided API keys and repository paths.
 
 ## Installation:
 
@@ -27,24 +30,44 @@ stage all changed files in your git repository and craft a concise, meaningful c
 
     commit [global options] command [command options] [arguments...]
 
+### Commands:
+
+- `commit` (default): Generate a commit message and commit changes.
+- `push`: Generate a commit message, commit changes, and push to remote.
+
 ### Global Options:
 
-- `--key value`: Provide a valid key to work with ChatGPT.
-- `--path value`: Specify the path to your git repository.
+- `--key value`: Provide a valid key to work with OpenAI API.
+- `--path value`: Specify the path to your git repository (default: current directory).
 - `--help, -h`: Display help information.
 - `--version, -v`: Print the current version of the tool.
 
-## Environment Variable:
+## Environment Variables:
 
-The tool can optionally read from the `OPENAI_API_KEY` environment variable to interface with the OpenAI API. Ensure you
-set this variable if you don't intend to use the `--key` option directly.
+- `OPENAI_API_KEY`: The tool can optionally read from this environment variable to interface with the OpenAI API. Set this variable if you don't intend to use the `--key` option directly.
+- `COMMIT_DRYRUN`: Set to `true` to enable dry-run mode, which will display the generated commit message without actually committing.
 
-## Example:
+## Examples:
 
-    commit --key abcdefg --path /home/user/my-repo
+### Basic usage (uses OPENAI_API_KEY environment variable):
 
-or just:
+    commit
 
+### With explicit API key:
+
+    commit --key sk-your-api-key-here
+
+### Specify a different repository path:
+
+    commit --path /home/user/my-repo
+
+### Commit and push in one command:
+
+    commit push
+
+### Dry-run mode (preview commit message without committing):
+
+    export COMMIT_DRYRUN=true
     commit
 
 For further help or to view a list of commands, run:

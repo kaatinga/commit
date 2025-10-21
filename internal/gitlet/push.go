@@ -2,7 +2,6 @@ package gitlet
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/kaatinga/commit/internal/settings"
 
@@ -10,20 +9,18 @@ import (
 )
 
 func Push(_ *cli.Context) error {
-	stdOut, stdErr := RunCommand("git fetch", "")
-	printOutput(stdOut, stdErr)
-
-	stdOut, stdErr = RunCommand("git push", settings.Path)
-	printOutput(stdOut, stdErr)
-	return nil
-}
-
-func printOutput(stdOut string, stdErr error) {
-	if stdErr != nil {
-		fmt.Println(stdErr)
+	output, err := RunCommand("git fetch", "")
+	if output != "" {
+		fmt.Println(output)
+	}
+	if err != nil {
+		return fmt.Errorf("git fetch failed: %w", err)
 	}
 
-	if strings.TrimSpace(stdOut) != "" {
-		fmt.Println(stdOut)
+	output, err = RunCommand("git push", settings.RepositoryPath)
+	if output != "" {
+		fmt.Println(output)
 	}
+
+	return err
 }

@@ -2,26 +2,17 @@ package settings
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
 )
 
-const (
-	ContextFolder  = "commit"
-	KaatingaFolder = ".kaatinga"
-	contextFile    = "context.csv"
-)
+var RepositoryPath string
 
-var (
-	ContextAbsolutePath string
-	RepositoryPath      string
-)
-
-func Init() {
+func FindGitRepo() {
 	if err := DefinePaths(); err != nil {
-		log.Fatal(err)
+		_, _ = fmt.Fprint(os.Stderr, err)
+		os.Exit(1)
 	}
 }
 
@@ -31,7 +22,6 @@ func DefinePaths() error {
 		return fmt.Errorf("unable to find git repository in %s", Path)
 	}
 
-	ContextAbsolutePath = filepath.Join(RepositoryPath, KaatingaFolder, ContextFolder, contextFile)
 	return nil
 }
 

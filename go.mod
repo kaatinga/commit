@@ -3,7 +3,7 @@ module github.com/kaatinga/commit
 go 1.25
 
 require (
-	github.com/go-git/go-git/v5 v5.16.2
+	github.com/go-git/go-git/v5 v5.16.3
 	github.com/sashabaranov/go-openai v1.41.2
 	github.com/urfave/cli/v2 v2.27.7
 )

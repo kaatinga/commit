@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"os"
 	"time"
 
@@ -13,8 +13,8 @@ import (
 )
 
 func main() {
-	settings.Init()
-	gitlet.Init()
+	settings.FindGitRepo()
+	gitlet.OpenRepo()
 
 	app := &cli.App{
 		Name:           "A git commit CLI tool",
@@ -44,9 +44,6 @@ func main() {
 				Name:  "key",
 				Usage: "provide a valid key to work with openAI API",
 				Action: func(context *cli.Context, s string) error {
-					if len(s) != 51 {
-						return cli.Exit("invalid key ", 1)
-					}
 					settings.APIKey = s
 					return nil
 				},
@@ -66,6 +63,6 @@ func main() {
 	}
 
 	if err := app.Run(os.Args); err != nil {
-		log.Fatal(err)
+		_, _ = fmt.Fprint(os.Stderr, err)
 	}
 }

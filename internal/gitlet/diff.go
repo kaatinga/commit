@@ -1,10 +1,8 @@
 package gitlet
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
-	"io"
 	"os/exec"
 	"strings"
 	"time"
@@ -16,23 +14,23 @@ import (
 )
 
 func GetDiff() (string, error) {
-	return RunCommand(`git diff --diff-algorithm=minimal -- *.go`, settings.Path)
+	return RunCommand(`git diff --diff-algorithm=minimal`, settings.RepositoryPath)
 }
 
 func GetFileList() (string, error) {
-	return RunCommand(`git diff --name-only --diff-algorithm=minimal`, settings.Path)
+	return RunCommand(`git diff --name-only --diff-algorithm=minimal`, settings.RepositoryPath)
 }
 
 type Message struct {
-	Msg string
 	object.Signature
+	Msg string
 }
 
-func NewGitInfo(msg string) (*Message, error) {
+func NewGitInfo(msg string, scope config.Scope) (*Message, error) {
 	gitInfo := &Message{Msg: msg}
 
 	// get user info
-	gitConfig, err := Repo.ConfigScoped(config.GlobalScope)
+	gitConfig, err := Repo.ConfigScoped(scope)
 	if err != nil {
 		return nil, fmt.Errorf("unable to get git config: %w", err)
 	}
@@ -42,18 +40,24 @@ func NewGitInfo(msg string) (*Message, error) {
 	gitInfo.When = time.Now()
 
 	if gitInfo.Name == "" {
-		return nil, errors.New("user name is not set")
+		if scope == config.GlobalScope {
+			return nil, errors.New("user name is not set")
+		}
+
+		return NewGitInfo(msg, config.GlobalScope)
 	}
 
 	if gitInfo.Email == "" {
-		return nil, errors.New("user email is not set")
+		if scope == config.GlobalScope {
+			return nil, errors.New("user email is not set")
+		}
+
+		return NewGitInfo(msg, config.GlobalScope)
 	}
 
 	return gitInfo, nil
 }
 
-// RunCommand executes a command and waits for its output
-// specially done because git is messing up STDOUT and STDERR, see this: https://github.com/cli/cli/issues/2984
 func RunCommand(cmd string, dir string) (string, error) {
 	args := strings.Fields(cmd)
 	c := exec.Command(args[0], args[1:]...)
@@ -61,38 +65,10 @@ func RunCommand(cmd string, dir string) (string, error) {
 		c.Dir = dir
 	}
 
-	stdout, err := c.StdoutPipe()
+	output, err := c.CombinedOutput()
 	if err != nil {
-		return "", err
-	}
-	stderr, err := c.StderrPipe()
-	if err != nil {
-		return "", err
+		return string(output), fmt.Errorf("failed to run command: %w", err)
 	}
 
-	if err := c.Start(); err != nil {
-		return "", err
-	}
-
-	output, errStdOut := io.ReadAll(stdout)
-	errMsg, errStdErr := io.ReadAll(stderr)
-
-	if err := c.Wait(); err != nil {
-		return "", errors.New(string(errMsg))
-	}
-
-	if errStdOut != nil {
-		return "", errStdOut
-	}
-	if errStdErr != nil {
-		return "", errStdErr
-	}
-
-	output = bytes.TrimSuffix(output, []byte{10})
-
-	if len(errMsg) == 0 {
-		return string(output), nil
-	}
-
-	return string(output), errors.New(string(errMsg))
+	return string(output), nil
 }
