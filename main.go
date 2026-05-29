@@ -42,7 +42,7 @@ func main() {
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:  "key",
-				Usage: "provide a valid key to work with openAI API",
+				Usage: "provide a valid key to work with the Mistral API",
 				Action: func(context *cli.Context, s string) error {
 					settings.APIKey = s
 					return nil

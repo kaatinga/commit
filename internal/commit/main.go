@@ -8,11 +8,11 @@ import (
 
 	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing/color"
-	"github.com/sashabaranov/go-openai"
+	"github.com/kaatinga/mistralai-go"
 	"github.com/urfave/cli/v2"
 
 	"github.com/kaatinga/commit/internal/gitlet"
-	"github.com/kaatinga/commit/internal/gpt"
+	"github.com/kaatinga/commit/internal/mistralx"
 	"github.com/kaatinga/commit/internal/settings"
 )
 
@@ -56,8 +56,8 @@ Code diff is provided by 'git diff --diff-algorithm=minimal' command.
 )
 
 func Generate(cCtx *cli.Context) error {
-	if len(settings.APIKey) != 51 {
-		return cli.Exit("openAI API key is not specified", 1)
+	if settings.APIKey == "" {
+		return cli.Exit("Mistral API key is not specified", 1)
 	}
 
 	ctx, cancelFunc := context.WithTimeout(cCtx.Context, 25*time.Second)
@@ -71,7 +71,7 @@ func Generate(cCtx *cli.Context) error {
 		return err
 	}
 
-	commitMessage, err := gpt.NewRequest(ctx, settings.APIKey, gptRequest)
+	commitMessage, err := mistralx.NewRequest(ctx, settings.APIKey, gptRequest)
 	if err != nil {
 		return err
 	}
@@ -93,7 +93,7 @@ func Generate(cCtx *cli.Context) error {
 
 var errNoError = errors.New("not an error")
 
-func prepareRequest() ([]openai.ChatCompletionMessage, error) {
+func prepareRequest() ([]mistralai.ChatMessage, error) {
 	files, err := gitlet.GetFileList()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get file list: %w", err)
@@ -110,13 +110,13 @@ func prepareRequest() ([]openai.ChatCompletionMessage, error) {
 		return nil, fmt.Errorf("failed to get diff: %w", err)
 	}
 
-	messages := []openai.ChatCompletionMessage{
+	messages := []mistralai.ChatMessage{
 		{
-			Role:    openai.ChatMessageRoleSystem,
+			Role:    "system",
 			Content: apiContext,
 		},
 		{
-			Role:    openai.ChatMessageRoleUser,
+			Role:    "user",
 			Content: fmt.Sprintf(requestTemplate, files, diff),
 		},
 	}
