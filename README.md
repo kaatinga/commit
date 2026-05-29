@@ -15,7 +15,7 @@ stage all changed files in your git repository and craft a concise, meaningful c
 
 ## Features:
 
-- Leverages OpenAI to generate commit messages based on your code changes.
+- Leverages the Mistral AI API to generate commit messages based on your code changes.
 - Automatically stages all changed files in the git repository.
 - Commits with the AI-generated message.
 - Optional `push` command to commit and push in one step.
@@ -37,25 +37,25 @@ stage all changed files in your git repository and craft a concise, meaningful c
 
 ### Global Options:
 
-- `--key value`: Provide a valid key to work with OpenAI API.
+- `--key value`: Provide a valid key to work with the Mistral AI API.
 - `--path value`: Specify the path to your git repository (default: current directory).
 - `--help, -h`: Display help information.
 - `--version, -v`: Print the current version of the tool.
 
 ## Environment Variables:
 
-- `OPENAI_API_KEY`: The tool can optionally read from this environment variable to interface with the OpenAI API. Set this variable if you don't intend to use the `--key` option directly.
+- `MISTRAL_API_KEY`: The tool can optionally read from this environment variable to interface with the Mistral AI API. Set this variable if you don't intend to use the `--key` option directly.
 - `COMMIT_DRYRUN`: Set to `true` to enable dry-run mode, which will display the generated commit message without actually committing.
 
 ## Examples:
 
-### Basic usage (uses OPENAI_API_KEY environment variable):
+### Basic usage (uses MISTRAL_API_KEY environment variable):
 
     commit
 
 ### With explicit API key:
 
-    commit --key sk-your-api-key-here
+    commit --key your-mistral-api-key-here
 
 ### Specify a different repository path:
 

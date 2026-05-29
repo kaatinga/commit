@@ -47,7 +47,7 @@ The response must contain only one field "message" with the commit message.
 
 Required commit message style:
 	- commit message must be brief
-	- do not prise the changes, we just state what was changed, not why
+	- do not praise the changes, we just state what was changed, not why
 	- do not put dot in the end of the last sentence
 
 Files are provided by 'git diff --name-only --diff-algorithm=minimal' command.
@@ -76,15 +76,14 @@ func Generate(cCtx *cli.Context) error {
 		return err
 	}
 
-	var gitInfo *gitlet.Message
-	gitInfo, err = gitlet.NewGitInfo(commitMessage, config.LocalScope)
-	if err != nil {
-		return err
-	}
-
 	if settings.DryRun {
 		fmt.Printf("Dryrun: commit message:\n%s\n", commitMessage)
 		return nil
+	}
+
+	gitInfo, err := gitlet.NewGitInfo(commitMessage, config.LocalScope)
+	if err != nil {
+		return err
 	}
 
 	fmt.Printf("💪 Added commit:\n%s%s%s\n", color.Cyan, commitMessage, color.Reset)

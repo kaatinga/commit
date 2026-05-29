@@ -13,9 +13,6 @@ import (
 )
 
 func main() {
-	settings.FindGitRepo()
-	gitlet.OpenRepo()
-
 	app := &cli.App{
 		Name:           "A git commit CLI tool",
 		Description:    "Commit helps to generate commit messages.",
@@ -28,6 +25,11 @@ func main() {
 		},
 		HelpName: "commit",
 		Usage:    "automatic commit message generator",
+		// Before runs after global flags are parsed, so --path is honored when locating
+		// and opening the repository.
+		Before: func(*cli.Context) error {
+			return gitlet.Open(settings.Path)
+		},
 		Commands: []*cli.Command{
 			{
 				Name:   "commit",
@@ -56,13 +58,14 @@ func main() {
 						settings.Path = s
 					}
 
-					return settings.DefinePaths()
+					return nil
 				},
 			},
 		},
 	}
 
 	if err := app.Run(os.Args); err != nil {
-		_, _ = fmt.Fprint(os.Stderr, err)
+		_, _ = fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
 	}
 }

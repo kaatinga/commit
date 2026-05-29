@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing/object"
 )
 
@@ -37,8 +38,7 @@ func TestNewGitInfo(t *testing.T) {
 	})
 
 	type args struct {
-		path string
-		msg  string
+		msg string
 	}
 	tests := []struct {
 		name        string
@@ -46,7 +46,7 @@ func TestNewGitInfo(t *testing.T) {
 		wantGitInfo *Message
 		wantErr     bool
 	}{
-		{name: "test1", args: args{".", "test"},
+		{name: "test1", args: args{"test"},
 			wantGitInfo: &Message{
 				Msg: "test",
 				Signature: object.Signature{
