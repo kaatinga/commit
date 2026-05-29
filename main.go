@@ -12,12 +12,15 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+var version = "dev"
+
 func main() {
 	app := &cli.App{
-		Name:           "A git commit CLI tool",
+		Name:           "commit",
 		Description:    "Commit helps to generate commit messages.",
 		DefaultCommand: "commit",
 		Compiled:       time.Now(),
+		Version:        version,
 		Authors: []*cli.Author{
 			{
 				Name: "Michael Gunkoff",
@@ -25,8 +28,8 @@ func main() {
 		},
 		HelpName: "commit",
 		Usage:    "automatic commit message generator",
-		// Before runs after global flags are parsed, so --path is honored when locating
-		// and opening the repository.
+		// Flag destinations are bound during flag parsing, which runs before
+		// Before, so settings.Path is already set when we open the repository.
 		Before: func(*cli.Context) error {
 			return gitlet.Open(settings.Path)
 		},
@@ -43,23 +46,22 @@ func main() {
 		},
 		Flags: []cli.Flag{
 			&cli.StringFlag{
-				Name:  "key",
-				Usage: "provide a valid key to work with the Mistral API",
-				Action: func(context *cli.Context, s string) error {
-					settings.APIKey = s
-					return nil
-				},
+				Name:        "key",
+				Usage:       "Mistral API key (falls back to the MISTRAL_API_KEY env var)",
+				EnvVars:     []string{"MISTRAL_API_KEY"},
+				Destination: &settings.APIKey,
 			},
 			&cli.StringFlag{
-				Name:  "path",
-				Usage: "provide a valid path to work with git repository",
-				Action: func(context *cli.Context, s string) error {
-					if s != "" {
-						settings.Path = s
-					}
-
-					return nil
-				},
+				Name:        "path",
+				Usage:       "path to the git repository",
+				Value:       ".",
+				Destination: &settings.Path,
+			},
+			&cli.BoolFlag{
+				Name:        "dry-run",
+				Usage:       "print the generated commit message without committing",
+				EnvVars:     []string{"COMMIT_DRYRUN"},
+				Destination: &settings.DryRun,
 			},
 		},
 	}

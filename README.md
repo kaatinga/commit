@@ -37,8 +37,9 @@ stage all changed files in your git repository and craft a concise, meaningful c
 
 ### Global Options:
 
-- `--key value`: Provide a valid key to work with the Mistral AI API.
+- `--key value`: Provide a valid key to work with the Mistral AI API (falls back to `MISTRAL_API_KEY`).
 - `--path value`: Specify the path to your git repository (default: current directory).
+- `--dry-run`: Preview the generated commit message without committing (also enabled by `COMMIT_DRYRUN=true`).
 - `--help, -h`: Display help information.
 - `--version, -v`: Print the current version of the tool.
 
@@ -66,6 +67,10 @@ stage all changed files in your git repository and craft a concise, meaningful c
     commit push
 
 ### Dry-run mode (preview commit message without committing):
+
+    commit --dry-run
+
+or via the environment variable:
 
     export COMMIT_DRYRUN=true
     commit

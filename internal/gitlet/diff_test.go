@@ -12,26 +12,26 @@ import (
 
 func TestNewGitInfo(t *testing.T) {
 	// create .git folder and test config
-	_, err := RunCommand(`git init`, ".")
+	_, err := RunCommand(".", "git", "init")
 	if err != nil {
 		t.Error(err)
 		return
 	}
 
-	_, err = RunCommand(`git config user.name Michael`, ".")
+	_, err = RunCommand(".", "git", "config", "user.name", "Michael")
 	if err != nil {
 		t.Error(err)
 		return
 	}
 
-	_, err = RunCommand(`git config user.email a@dbc.de`, ".")
+	_, err = RunCommand(".", "git", "config", "user.email", "a@dbc.de")
 	if err != nil {
 		t.Error(err)
 		return
 	}
 
 	t.Cleanup(func() {
-		_, err = RunCommand(`rm -rf .git`, ".")
+		_, err = RunCommand(".", "rm", "-rf", ".git")
 		if err != nil {
 			t.Error(err)
 		}

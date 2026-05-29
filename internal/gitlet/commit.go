@@ -26,7 +26,7 @@ func (gi *Message) Commit() error {
 }
 
 func AddAll(dir string) error {
-	_, err := RunCommand("git add -A", dir)
+	_, err := RunCommand(dir, "git", "add", "-A")
 	// seems to never return output
 	return err
 }

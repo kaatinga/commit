@@ -5,12 +5,17 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/kaatinga/mistralai-go"
 )
 
-// model is the Mistral chat model used to generate commit messages.
-const model = mistralai.ChatModelMistralSmallLatest
+const (
+	// model is the Mistral chat model used to generate commit messages.
+	model = mistralai.ChatModelMistralSmallLatest
+	// maxTokens caps the response; a commit message is a single short line.
+	maxTokens = 135
+)
 
 // NewRequest returns a commit message generated from the provided chat messages.
 func NewRequest(ctx context.Context, apiKey string, messages []mistralai.ChatMessage) (string, error) {
@@ -34,7 +39,7 @@ func doRequest(ctx context.Context, client mistralai.Client, messages []mistrala
 	resp, err := client.ChatCompletion(ctx, mistralai.ChatCompletionRequest{
 		Model:     model,
 		Messages:  messages,
-		MaxTokens: 135,
+		MaxTokens: maxTokens,
 		ResponseFormat: &mistralai.ResponseFormat{
 			Type: "json_object",
 		},
@@ -53,9 +58,10 @@ func doRequest(ctx context.Context, client mistralai.Client, messages []mistrala
 		return "", err
 	}
 
+	result.Message = strings.TrimSpace(result.Message)
 	if result.Message == "" {
 		if attempts > 0 {
-			fmt.Println("🐌 It will take more time to generate a commit message, please wait...")
+			fmt.Println("🐌 The model returned an empty message, retrying...")
 			return doRequest(ctx, client, messages, attempts-1)
 		}
 

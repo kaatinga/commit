@@ -53,6 +53,9 @@ Required commit message style:
 Files are provided by 'git diff --name-only --diff-algorithm=minimal' command.
 Code diff is provided by 'git diff --diff-algorithm=minimal' command.
 `
+
+	requestTimeout = 25 * time.Second
+	maxDiffBytes   = 48 * 1024
 )
 
 func Generate(cCtx *cli.Context) error {
@@ -60,12 +63,12 @@ func Generate(cCtx *cli.Context) error {
 		return cli.Exit("Mistral API key is not specified", 1)
 	}
 
-	ctx, cancelFunc := context.WithTimeout(cCtx.Context, 25*time.Second)
+	ctx, cancelFunc := context.WithTimeout(cCtx.Context, requestTimeout)
 	defer cancelFunc()
 
 	gptRequest, err := prepareRequest()
 	if err != nil {
-		if errors.Is(err, errNoError) {
+		if errors.Is(err, errNoChanges) {
 			return nil
 		}
 		return err
@@ -90,7 +93,7 @@ func Generate(cCtx *cli.Context) error {
 	return gitInfo.Commit()
 }
 
-var errNoError = errors.New("not an error")
+var errNoChanges = errors.New("nothing to commit")
 
 func prepareRequest() ([]mistralai.ChatMessage, error) {
 	files, err := gitlet.GetFileList()
@@ -100,13 +103,17 @@ func prepareRequest() ([]mistralai.ChatMessage, error) {
 
 	if files == "" {
 		fmt.Printf("%sNothing is changed, no commit is needed.%s\n", color.Green, color.Reset)
-		return nil, errNoError
+		return nil, errNoChanges
 	}
 
 	var diff string
 	diff, err = gitlet.GetDiff()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get diff: %w", err)
+	}
+
+	if len(diff) > maxDiffBytes {
+		diff = diff[:maxDiffBytes] + "\n... diff truncated ..."
 	}
 
 	messages := []mistralai.ChatMessage{

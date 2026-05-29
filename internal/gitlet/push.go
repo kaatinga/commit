@@ -9,7 +9,7 @@ import (
 )
 
 func Push(_ *cli.Context) error {
-	output, err := RunCommand("git fetch", settings.RepositoryPath)
+	output, err := RunCommand(settings.RepositoryPath, "git", "fetch")
 	if output != "" {
 		fmt.Println(output)
 	}
@@ -17,7 +17,7 @@ func Push(_ *cli.Context) error {
 		return fmt.Errorf("git fetch failed: %w", err)
 	}
 
-	output, err = RunCommand("git push", settings.RepositoryPath)
+	output, err = RunCommand(settings.RepositoryPath, "git", "push")
 	if output != "" {
 		fmt.Println(output)
 	}

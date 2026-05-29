@@ -18,7 +18,7 @@ func GetDiff() (string, error) {
 	var b strings.Builder
 
 	if hasHEAD() {
-		tracked, err := RunCommand(`git diff HEAD --diff-algorithm=minimal`, settings.RepositoryPath)
+		tracked, err := RunCommand(settings.RepositoryPath, "git", "diff", "HEAD", "--diff-algorithm=minimal")
 		if err != nil {
 			return tracked, err
 		}
@@ -44,7 +44,7 @@ func GetFileList() (string, error) {
 	var b strings.Builder
 
 	if hasHEAD() {
-		tracked, err := RunCommand(`git diff HEAD --name-only --diff-algorithm=minimal`, settings.RepositoryPath)
+		tracked, err := RunCommand(settings.RepositoryPath, "git", "diff", "HEAD", "--name-only", "--diff-algorithm=minimal")
 		if err != nil {
 			return tracked, err
 		}
@@ -64,18 +64,18 @@ func GetFileList() (string, error) {
 }
 
 func hasHEAD() bool {
-	_, err := RunCommand(`git rev-parse --verify HEAD`, settings.RepositoryPath)
+	_, err := RunCommand(settings.RepositoryPath, "git", "rev-parse", "--verify", "HEAD")
 	return err == nil
 }
 
 func untrackedFiles() ([]string, error) {
-	out, err := RunCommand(`git ls-files --others --exclude-standard`, settings.RepositoryPath)
+	out, err := RunCommand(settings.RepositoryPath, "git", "ls-files", "--others", "--exclude-standard")
 	if err != nil {
 		return nil, fmt.Errorf("failed to list untracked files: %w", err)
 	}
 
 	var files []string
-	for _, line := range strings.Split(out, "\n") {
+	for line := range strings.SplitSeq(out, "\n") {
 		if line = strings.TrimSpace(line); line != "" {
 			files = append(files, line)
 		}
@@ -137,16 +137,15 @@ func NewGitInfo(msg string, scope config.Scope) (*Message, error) {
 	return gitInfo, nil
 }
 
-func RunCommand(cmd string, dir string) (string, error) {
-	args := strings.Fields(cmd)
-	c := exec.Command(args[0], args[1:]...)
+func RunCommand(dir, name string, args ...string) (string, error) {
+	c := exec.Command(name, args...)
 	if dir != "" {
 		c.Dir = dir
 	}
 
 	output, err := c.CombinedOutput()
 	if err != nil {
-		return string(output), fmt.Errorf("failed to run command: %w", err)
+		return string(output), fmt.Errorf("failed to run %s: %w", name, err)
 	}
 
 	return string(output), nil
