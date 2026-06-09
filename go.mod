@@ -4,7 +4,7 @@ go 1.26
 
 require (
 	github.com/go-git/go-git/v5 v5.19.1
-	github.com/kaatinga/mistralai-go v0.3.1
+	github.com/kaatinga/mistralai-go v0.14.1
 	github.com/urfave/cli/v2 v2.27.7
 )
 
